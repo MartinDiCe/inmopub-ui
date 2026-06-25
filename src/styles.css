@@ -885,12 +885,116 @@ a {
 }
 
 .footer p {
+  margin: 0;
   color: rgba(255, 255, 255, 0.58);
 }
 
 .footer a:last-child {
   color: var(--dice-accent);
   font-weight: 950;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px 16px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.legal-app {
+  background: var(--dice-light);
+}
+
+.legal-main {
+  width: min(100% - 40px, 980px);
+  margin: 0 auto;
+  padding: 132px 0 72px;
+}
+
+.legal-hero {
+  padding: 44px 0 26px;
+}
+
+.legal-hero h1 {
+  max-width: 760px;
+  margin: 10px 0 12px;
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+
+.legal-hero p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.legal-content {
+  display: grid;
+  gap: 14px;
+}
+
+.legal-content article {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  padding: clamp(22px, 4vw, 34px);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.legal-content h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.legal-content p {
+  margin: 0;
+  color: #40556f;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.cookie-banner {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  width: min(760px, calc(100vw - 44px));
+  border: 1px solid rgba(37, 41, 47, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 18px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
+  backdrop-filter: blur(14px);
+}
+
+.cookie-banner strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.cookie-banner p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cookie-actions {
+  display: flex;
+  gap: 10px;
 }
 
 .modal-backdrop {
@@ -1231,6 +1335,31 @@ a {
   .footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
+  }
+
+  .legal-main {
+    width: min(100% - 28px, 980px);
+    padding-top: 100px;
+  }
+
+  .cookie-banner {
+    left: 14px;
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    grid-template-columns: 1fr;
+    width: auto;
+  }
+
+  .cookie-actions {
+    justify-content: stretch;
+  }
+
+  .cookie-actions button {
+    flex: 1;
   }
 
   .copilot {

@@ -27,7 +27,7 @@ import {
 import { copilotKnowledge, defaultRoiInputs, demoProperties, funnelSteps, marketInsights } from './data';
 import { fetchProperties, submitPropertyLead } from './propertiesApi';
 import { calculateRoi, money } from './roi';
-import { appConfig, bindGlobalClickTracking, bindScrollDepthTracking, submitLead, track } from './marketing';
+import { appConfig, bindGlobalClickTracking, bindScrollDepthTracking, getCookieConsent, setCookieConsent, submitLead, track } from './marketing';
 import type { CopilotMessage, OperationType, Property, RoiInputs } from './types';
 import type { LucideIcon } from 'lucide-react';
 
@@ -406,14 +406,158 @@ function Copilot() {
   );
 }
 
+type LegalPageKey = 'legal' | 'privacidad' | 'cookies' | 'terminos' | 'aviso-legal';
+
+const legalPages: Record<LegalPageKey, { title: string; updated: string; sections: Array<[string, string]> }> = {
+  legal: {
+    title: 'Legal y transparencia',
+    updated: '25 Jun 2026',
+    sections: [
+      ['Marco legal', 'InmoPub es un sitio comercial de DiceProjects orientado a mostrar una solución vertical para inmobiliarias. En esta sección reunimos las políticas aplicables al uso del sitio, formularios, medición de campañas, cookies y contacto comercial.'],
+      ['Documentos disponibles', 'Podés consultar los términos y condiciones, política de privacidad, política de cookies y aviso legal desde los enlaces al pie del sitio.'],
+      ['Contacto legal', 'Para consultas legales o de privacidad escribinos a legal@diceprojects.com.'],
+    ],
+  },
+  privacidad: {
+    title: 'Política de privacidad',
+    updated: '25 Jun 2026',
+    sections: [
+      ['Alcance', 'Esta política aplica al sitio web InmoPub, a sus formularios comerciales, eventos de marketing, consultas por propiedades demo o publicadas y comunicaciones derivadas.'],
+      ['Datos que podemos tratar', 'Podemos procesar nombre, email, teléfono, inmobiliaria, mensaje, propiedad consultada, URL de origen, campaña, fuente UTM, identificador de visitante, interacción con formularios, clicks, búsquedas, filtros, uso del simulador y preguntas realizadas al copiloto.'],
+      ['Finalidad', 'Usamos la información para responder consultas, coordinar demos, medir campañas, mejorar la experiencia, entender intención comercial, derivar oportunidades a canales de contacto y proteger la operación del sitio.'],
+      ['Servicios conectados', 'El sitio puede integrarse con APIs de DiceProjects para marketing, propiedades, formularios y WhatsApp. Los datos enviados voluntariamente por formularios se usan para contacto comercial y seguimiento.'],
+      ['Conservación', 'Conservamos los datos mientras sean necesarios para operar campañas, responder consultas, auditar actividad, prestar servicios o cumplir obligaciones aplicables. Luego pueden eliminarse, anonimizarse o mantenerse sólo cuando corresponda técnica o legalmente.'],
+      ['Derechos', 'Podés solicitar acceso, rectificación o eliminación de tus datos escribiendo a legal@diceprojects.com o mdice@diceprojects.com.'],
+    ],
+  },
+  cookies: {
+    title: 'Política de cookies',
+    updated: '25 Jun 2026',
+    sections: [
+      ['Qué son', 'Las cookies y tecnologías similares son pequeños datos que permiten recordar preferencias, medir uso del sitio y mejorar la experiencia. InmoPub usa principalmente localStorage y eventos web propios.'],
+      ['Cookies esenciales', 'Son necesarias para que el sitio funcione, por ejemplo recordar la preferencia del banner de cookies o mantener funcionalidades básicas del navegador.'],
+      ['Medición y marketing', 'Con tu consentimiento, podemos medir vistas, clicks, scroll, búsquedas, filtros, propiedades abiertas, preguntas al copiloto, simulaciones comerciales y formularios. Esto ayuda a optimizar campañas y entender intención real.'],
+      ['Control', 'Podés aceptar o rechazar cookies no esenciales desde el banner. También podés borrar datos del sitio desde la configuración del navegador. Si rechazás, el sitio seguirá funcionando, pero no enviaremos eventos de marketing automáticos.'],
+    ],
+  },
+  terminos: {
+    title: 'Términos y condiciones',
+    updated: '25 Jun 2026',
+    sections: [
+      ['Aceptación', 'Al navegar InmoPub aceptás estos términos. Si no estás de acuerdo, podés dejar de usar el sitio.'],
+      ['Uso del sitio', 'InmoPub muestra información comercial, demos, propiedades de ejemplo o publicadas, simuladores y formularios de contacto. La información puede cambiar sin aviso previo.'],
+      ['No asesoramiento legal o inmobiliario vinculante', 'El contenido del sitio y del copiloto tiene finalidad informativa y comercial. Las operaciones inmobiliarias reales deben ser revisadas por profesionales habilitados, escribanos, abogados o asesores correspondientes.'],
+      ['Disponibilidad', 'Hacemos esfuerzos razonables para mantener el sitio disponible, pero no garantizamos operación ininterrumpida ni ausencia total de errores.'],
+      ['Propiedad intelectual', 'El sitio, marca, textos, diseños, código y materiales pertenecen a DiceProjects o a sus respectivos titulares. No se permite copiar, distribuir o explotar comercialmente el contenido sin autorización.'],
+    ],
+  },
+  'aviso-legal': {
+    title: 'Aviso legal',
+    updated: '25 Jun 2026',
+    sections: [
+      ['Titularidad', 'InmoPub es un producto vertical presentado por DiceProjects. Contacto: mdice@diceprojects.com.'],
+      ['Responsabilidad', 'La información publicada se ofrece de buena fe con finalidad comercial e informativa. DiceProjects no garantiza que todo contenido esté libre de errores ni asume responsabilidad por decisiones tomadas únicamente sobre la base del sitio.'],
+      ['Enlaces externos', 'El sitio puede enlazar a WhatsApp, DiceProjects u otros recursos. No controlamos el contenido ni disponibilidad de sitios externos.'],
+      ['Jurisdicción', 'Estas condiciones se interpretan bajo normativa aplicable en Argentina, salvo que una relación contractual específica establezca otra cosa.'],
+    ],
+  },
+};
+
+function legalKeyFromPath(pathname: string): LegalPageKey | null {
+  const cleanPath = pathname.replace(/^\/+|\/+$/g, '') || '';
+  if (cleanPath === 'legal' || cleanPath === 'privacidad' || cleanPath === 'cookies' || cleanPath === 'terminos' || cleanPath === 'aviso-legal') return cleanPath;
+  return null;
+}
+
+function LegalPage({ pageKey }: { pageKey: LegalPageKey }) {
+  const page = legalPages[pageKey];
+  useEffect(() => {
+    document.title = `${page.title} | InmoPub`;
+  }, [page.title]);
+  return (
+    <div className="app legal-app">
+      <header className="topbar">
+        <Logo />
+        <nav>
+          <a href="/">Inicio</a>
+          <a href="/privacidad">Privacidad</a>
+          <a href="/cookies">Cookies</a>
+          <a href="/terminos">Términos</a>
+        </nav>
+        <a className="nav-cta" href="/#contacto">Ver demo</a>
+      </header>
+      <main className="legal-main">
+        <section className="legal-hero">
+          <span className="eyebrow">InmoPub legal</span>
+          <h1>{page.title}</h1>
+          <p>Última actualización: {page.updated}</p>
+        </section>
+        <section className="legal-content">
+          {page.sections.map(([title, body]) => (
+            <article key={title}>
+              <h2>{title}</h2>
+              <p>{body}</p>
+            </article>
+          ))}
+        </section>
+      </main>
+      <FooterContent />
+      <CookieBanner />
+    </div>
+  );
+}
+
+function CookieBanner() {
+  const [visible, setVisible] = useState(() => getCookieConsent() === null);
+  if (!visible) return null;
+  const choose = (value: 'accepted' | 'rejected') => {
+    setCookieConsent(value);
+    setVisible(false);
+    if (value === 'accepted') {
+      track('CLICK', { actionCode: 'cookie_accept', actionLabel: 'Acepta cookies', category: 'CONSENT' });
+    }
+  };
+  return (
+    <div className="cookie-banner" role="region" aria-label="Aviso de cookies">
+      <div>
+        <strong>Cookies y medición</strong>
+        <p>Usamos cookies no esenciales sólo si aceptás para medir campañas, consultas, clicks y uso del copiloto. Podés seguir navegando aunque rechaces.</p>
+      </div>
+      <div className="cookie-actions">
+        <button type="button" className="secondary-button" onClick={() => choose('rejected')}>Rechazar</button>
+        <button type="button" className="primary-button" onClick={() => choose('accepted')}>Aceptar</button>
+      </div>
+    </div>
+  );
+}
+
+function FooterContent() {
+  return (
+    <footer className="footer">
+      <Logo />
+      <p>Producto vertical para inmobiliarias. Mini portal, seguimiento comercial y documentos.</p>
+      <div className="footer-links">
+        <a href="/legal">Legal</a>
+        <a href="/privacidad">Privacidad</a>
+        <a href="/cookies">Cookies</a>
+        <a href="/terminos">Términos</a>
+        <a href="/aviso-legal">Aviso legal</a>
+        <a href="https://diceprojects.com" target="_blank" rel="noreferrer" data-track="footer_diceprojects">by DiceProjects</a>
+      </div>
+    </footer>
+  );
+}
+
 export default function App() {
   const [properties, setProperties] = useState<Property[]>(demoProperties);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Property | null>(null);
   const [search, setSearch] = useState('');
   const [operation, setOperation] = useState('');
+  const legalPageKey = legalKeyFromPath(window.location.pathname);
 
   useEffect(() => {
+    if (legalPageKey) return;
     document.title = 'InmoPub | Mini portal inmobiliario, consultas y documentos';
     track('VIEW', {
       actionCode: 'page_home',
@@ -428,7 +572,9 @@ export default function App() {
       unbindClick();
       unbindScroll();
     };
-  }, []);
+  }, [legalPageKey]);
+
+  if (legalPageKey) return <LegalPage pageKey={legalPageKey} />;
 
   async function loadProperties(filters: Record<string, string | number | undefined>) {
     setLoading(true);
@@ -650,14 +796,11 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="footer">
-        <Logo />
-        <p>Producto vertical para inmobiliarias. Mini portal, seguimiento comercial y documentos.</p>
-        <a href="https://diceprojects.com" target="_blank" rel="noreferrer" data-track="footer_diceprojects">by DiceProjects</a>
-      </footer>
+      <FooterContent />
 
       <PropertyModal property={selected} onClose={() => setSelected(null)} />
       <Copilot />
+      <CookieBanner />
     </div>
   );
 }

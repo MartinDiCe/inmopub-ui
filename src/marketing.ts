@@ -12,6 +12,9 @@ export const appConfig = {
 
 const visitorKey = 'inmopub.visitorId.v1';
 const scrollDepthKey = 'inmopub.scrollDepth.v1';
+const consentKey = 'inmopub.cookieConsent.v1';
+
+export type CookieConsent = 'accepted' | 'rejected' | null;
 
 function clean(value: unknown): string {
   return typeof value === 'string' ? value.trim().replace(/\/+$/, '') : '';
@@ -27,6 +30,19 @@ export function visitorId(): string {
   const next = window.crypto?.randomUUID?.() || `visitor_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   window.localStorage.setItem(visitorKey, next);
   return next;
+}
+
+export function getCookieConsent(): CookieConsent {
+  const value = window.localStorage.getItem(consentKey);
+  return value === 'accepted' || value === 'rejected' ? value : null;
+}
+
+export function setCookieConsent(value: Exclude<CookieConsent, null>) {
+  window.localStorage.setItem(consentKey, value);
+}
+
+export function hasMarketingConsent(): boolean {
+  return getCookieConsent() === 'accepted';
 }
 
 function utm() {
@@ -61,6 +77,7 @@ export function track(eventType: MarketingEventType, input: {
   metadata?: Record<string, unknown>;
 }) {
   if (!appConfig.marketingCampaignKey) return;
+  if (!hasMarketingConsent()) return;
   void fetch(apiUrl(`/v1/campaigns/capture/${encodeURIComponent(appConfig.marketingCampaignKey)}/events`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
