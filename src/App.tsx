@@ -316,8 +316,8 @@ function Copilot() {
     id: 'welcome',
     sender: 'bot',
     title: 'Copiloto InmoPub',
-    text: 'Soy tu asesor para vender la demo inmobiliaria. Puedo ayudarte con retorno esperado, discurso comercial, flujo de propiedades, documentos, marketing y objeciones.',
-    prompts: ['Quiero una demo', 'Calculame el retorno', 'Que documentos genera', 'Hablar por WhatsApp'],
+    text: 'Soy asesor inmobiliario y consultor comercial de InmoPub. Puedo orientar sobre publicación de propiedades, consultas, visitas, reservas, documentos y también ayudarte a vender la demo.',
+    prompts: ['Quiero una demo', 'Como atiendo una consulta', 'Que documentos genera', 'Hablar por WhatsApp'],
   }]);
 
   function answer(value: string) {
@@ -343,7 +343,7 @@ function Copilot() {
     const match = copilotKnowledge.find((item) => item.intent.some((keyword) => normalized.includes(keyword)));
     const fallback = {
       title: 'Siguiente mejor accion',
-      answer: 'Para vender InmoPub, llevá la conversacion al flujo completo: propiedad publicada, consulta capturada, carpeta comercial creada, documento generado y seguimiento medido. Si la inmobiliaria usa planillas o WhatsApp suelto, hay dolor claro.',
+      answer: 'Como asesor inmobiliario, llevaria la conversacion al siguiente paso concreto: entender la propiedad, calificar al interesado, coordinar visita y preparar la documentacion. Para vender InmoPub, mostrá ese mismo flujo completo en la demo.',
     };
     const wantsContact = ['demo', 'contacto', 'precio', 'plan', 'whatsapp', 'hablar', 'contactar', 'comprar'].some((keyword) => normalized.includes(keyword));
     setMessages((current) => [
@@ -354,7 +354,7 @@ function Copilot() {
         sender: 'bot',
         title: match?.title || fallback.title,
         text: match?.answer || fallback.answer,
-        prompts: ['Agendar demo', 'Mostrar simulador', 'Ver propiedades demo', 'Hablar por WhatsApp'],
+        prompts: ['Agendar demo', 'Ver propiedades demo', 'Como cerrar una visita', 'Hablar por WhatsApp'],
         showLeadForm: wantsContact,
       },
     ]);
@@ -385,7 +385,7 @@ function Copilot() {
             ))}
           </div>
           <form className="copilot-input" onSubmit={(event) => { event.preventDefault(); answer(input); }}>
-            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Preguntame como vender, simular retorno o mostrar documentos..." />
+            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Preguntame por venta, alquiler, visitas, documentos o demo..." />
             <button><Send size={17} /></button>
           </form>
         </div>

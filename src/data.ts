@@ -224,6 +224,21 @@ export const funnelSteps = [
 
 export const copilotKnowledge = [
   {
+    intent: ['consulta', 'interesado', 'cliente', 'contacto'],
+    title: 'Atencion profesional de consultas',
+    answer: 'La mejor respuesta inmobiliaria no es solo mandar fotos: confirmar necesidad, presupuesto, zona, urgencia, forma de contacto y disponibilidad para visita. InmoPub ayuda a que cada consulta quede asociada a una propiedad, con fuente, responsable y siguiente accion.',
+  },
+  {
+    intent: ['visita', 'mostrar', 'recorrido', 'agenda'],
+    title: 'De consulta a visita',
+    answer: 'Para aumentar cierres, el objetivo es convertir consultas calificadas en visitas concretas. Conviene responder rapido, proponer dos horarios, confirmar datos del interesado y dejar registro de visita, estado y comentarios para seguimiento.',
+  },
+  {
+    intent: ['tasacion', 'precio', 'valor', 'publicar'],
+    title: 'Publicacion y precio',
+    answer: 'Una ficha vendible debe mostrar ubicacion, precio, ambientes, superficies, amenities, expensas, fotos claras y beneficios de zona. Si el precio esta en revision, se puede publicar con estrategia consultiva y medir consultas para ajustar la propuesta comercial.',
+  },
+  {
     intent: ['precio', 'plan', 'cuanto', 'costo'],
     title: 'Precio orientado a resultado',
     answer: 'InmoPub se vende mejor como mini portal inmobiliario + seguimiento comercial + documentos. La demo debe mostrar ahorro de horas, velocidad de respuesta y operaciones cerradas, no solo cantidad de propiedades. Para cotizar, conviene mirar cantidad de propiedades activas, usuarios, sucursales/vendedores y volumen de consultas mensual.',
@@ -242,6 +257,16 @@ export const copilotKnowledge = [
     intent: ['documento', 'contrato', 'reserva', 'boleto', 'operacion'],
     title: 'Propiedades + documentos',
     answer: 'Cada operacion puede preparar reserva, autorizacion de venta/alquiler, boleto, contrato, entrega de llaves o documentacion de escribania. El copiloto no guarda sin confirmacion: previsualiza datos, pide faltantes y genera el documento para revisar.',
+  },
+  {
+    intent: ['alquiler', 'venta', 'temporario', 'reservar'],
+    title: 'Venta, alquiler o temporario',
+    answer: 'InmoPub sirve para venta, alquiler y temporario: la diferencia esta en estados, datos pedidos y documentos. Venta prioriza reserva/autorizacion/boleto; alquiler prioriza perfil del interesado, garantia, contrato y entrega; temporario prioriza disponibilidad, senia y reglas de estadia.',
+  },
+  {
+    intent: ['objecion', 'objeciones', 'competencia', 'portal', 'zonaprop', 'argenprop', 'mercadolibre'],
+    title: 'Como manejar la objecion de portales',
+    answer: 'InmoPub no compite por trafico masivo contra portales. Se posiciona como mini portal propio + seguimiento + documentos: ordena consultas que llegan por web, WhatsApp, redes o portales y evita que la operacion quede perdida en chats y planillas.',
   },
   {
     intent: ['marketing', 'campana', 'medir', 'ads'],
