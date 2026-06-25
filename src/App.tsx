@@ -95,6 +95,51 @@ function localizedPath(locale: Locale, path: string) {
   return locale === 'es' ? path : `/${locale}${path === '/' ? '' : path}`;
 }
 
+function renderDocumentText(text: string) {
+  const parts = text.split(/(\{\{[^}]+\}\})/g).filter(Boolean);
+  return parts.map((part, index) => {
+    if (part.startsWith('{{') && part.endsWith('}}')) {
+      return <mark key={`${part}-${index}`}>{part}</mark>;
+    }
+    return <span key={`${part}-${index}`}>{part}</span>;
+  });
+}
+
+type DocumentTemplatePreview = {
+  code: string;
+  label: string;
+  tag: string;
+  title: string;
+  paragraphs: string[];
+  signatures: string[];
+};
+
+function DocumentPreview({
+  company,
+  meta,
+  template,
+}: {
+  company: string;
+  meta: string;
+  template: DocumentTemplatePreview;
+}) {
+  return (
+    <article className="document-preview" aria-label={template.title}>
+      <div className="document-head">
+        <span>{company}</span>
+        <small>{meta}</small>
+      </div>
+      <h3>{template.title}</h3>
+      {template.paragraphs.map((paragraph) => (
+        <p key={paragraph}>{renderDocumentText(paragraph)}</p>
+      ))}
+      <div className="signature-row">
+        {template.signatures.map((signature) => <span key={signature}>{signature}</span>)}
+      </div>
+    </article>
+  );
+}
+
 function Logo() {
   const { t } = useLocale();
   return (
@@ -606,7 +651,12 @@ export default function App() {
   const [selected, setSelected] = useState<Property | null>(null);
   const [search, setSearch] = useState('');
   const [operation, setOperation] = useState('');
+  const [selectedDocumentCode, setSelectedDocumentCode] = useState('RESERVA_COMPRA');
   const legalPageKey = legalKeyFromPath(window.location.pathname);
+  const selectedDocument = useMemo(
+    () => t.document.templates.find((template) => template.code === selectedDocumentCode) ?? t.document.templates[0],
+    [selectedDocumentCode, t.document.templates],
+  );
   const quickFilterLabels = {
     saleCaba: localeLabel(t.catalog.sale, 'CABA'),
     rent: t.catalog.rent,
@@ -852,23 +902,41 @@ export default function App() {
         <RoiCalculator />
 
         <section className="section document-section">
-          <div className="document-preview">
-            <div className="document-head">
-              <span>{t.document.company}</span>
-              <small>{t.document.meta}</small>
-            </div>
-            <h3>{t.document.docTitle}</h3>
-            <p>{t.document.p1.split('{{cliente}}')[0]}<mark>{'{{cliente}}'}</mark>{t.document.p1.split('{{cliente}}')[1].split('{{domicilio}}')[0]}<mark>{'{{domicilio}}'}</mark>{t.document.p1.split('{{domicilio}}')[1].split('{{precio}}')[0]}<mark>{'{{precio}}'}</mark>{t.document.p1.split('{{precio}}')[1]}</p>
-            <p>{t.document.p2}</p>
-            <div className="signature-row"><span>{t.document.buyer}</span><span>{t.document.seller}</span><span>{t.document.agency}</span></div>
-          </div>
-          <div>
+          <div className="document-copy">
             <span className="eyebrow">{t.document.eyebrow}</span>
             <h2>{t.document.title}</h2>
             <p>{t.document.body}</p>
+            <div className="document-controls">
+              <label htmlFor="document-template-selector">{t.document.selectorLabel}</label>
+              <select
+                id="document-template-selector"
+                value={selectedDocument.code}
+                onChange={(event) => {
+                  setSelectedDocumentCode(event.target.value);
+                  track('CLICK', {
+                    actionCode: 'document_preview_type_change',
+                    actionLabel: event.target.value,
+                    category: 'DOCUMENTS',
+                  });
+                }}
+              >
+                {t.document.templates.map((template) => (
+                  <option key={template.code} value={template.code}>{template.label}</option>
+                ))}
+              </select>
+              <span className="document-api-pill"><FileText size={15} /> {t.document.apiPill}</span>
+            </div>
             <ul className="check-list">
               {t.document.checks.map((item) => <li key={item}><ShieldCheck size={18} /> {item}</li>)}
             </ul>
+          </div>
+          <div className="document-stage">
+            <div className="document-stage-head">
+              <span className="eyebrow">{t.document.previewLabel}</span>
+              <strong>{selectedDocument.label}</strong>
+              <small>{selectedDocument.tag}</small>
+            </div>
+            <DocumentPreview company={t.document.company} meta={t.document.meta} template={selectedDocument} />
           </div>
         </section>
 

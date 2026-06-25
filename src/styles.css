@@ -811,13 +811,87 @@ a {
 
 .document-section {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: 0.8fr 1.2fr;
   gap: 42px;
+  align-items: start;
+}
+
+.document-copy {
+  position: sticky;
+  top: 110px;
+}
+
+.document-controls {
+  display: grid;
+  gap: 12px;
+  margin: 28px 0 0;
+}
+
+.document-controls label {
+  color: #8ea0bd;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.document-controls select {
+  width: 100%;
+  border: 1px solid #d7e1ee;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--dice-dark);
+  padding: 14px 16px;
+  font: inherit;
+  font-weight: 850;
+}
+
+.document-api-pill {
+  display: inline-flex;
+  width: fit-content;
   align-items: center;
+  gap: 8px;
+  border: 1px solid #c9e8f7;
+  border-radius: 999px;
+  background: #eefaff;
+  color: var(--dice-blue);
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.document-stage {
+  display: grid;
+  gap: 14px;
+}
+
+.document-stage-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.document-stage-head strong {
+  color: var(--dice-dark);
+  font-size: 18px;
+}
+
+.document-stage-head small {
+  border-radius: 999px;
+  background: #eef2f7;
+  color: #50627d;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .document-preview {
-  padding: 48px;
+  min-height: 720px;
+  padding: 56px 48px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(20, 28, 38, 0.16);
   font-family: Georgia, "Times New Roman", serif;
   color: #111827;
 }
@@ -855,6 +929,7 @@ a {
   border-radius: 3px;
   background: #fff7cc;
   padding: 1px 4px;
+  color: #111827;
 }
 
 .signature-row {
@@ -1403,6 +1478,22 @@ a {
     padding: 22px;
   }
 
+  .document-copy {
+    position: static;
+  }
+
+  .document-preview {
+    min-height: 560px;
+  }
+
+  .document-preview h3 {
+    font-size: 21px;
+  }
+
+  .document-preview p {
+    font-size: 16px;
+  }
+
   .signature-row {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -1451,5 +1542,27 @@ a {
     width: 58px;
     padding: 0;
     justify-content: center;
+  }
+}
+
+@media print {
+  .topbar,
+  .document-copy,
+  .footer,
+  .copilot,
+  .cookie-banner {
+    display: none !important;
+  }
+
+  .document-section {
+    display: block;
+    width: 100%;
+  }
+
+  .document-preview {
+    min-height: auto;
+    padding: 0;
+    box-shadow: none;
+    break-inside: avoid;
   }
 }
