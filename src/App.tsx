@@ -200,7 +200,7 @@ function LeadForm({ property, onClose }: { property?: Property; onClose?: () => 
           {state === 'sending' ? 'Enviando...' : 'Pedir demo'} <ArrowRight size={17} />
         </button>
       </div>
-      {state === 'sent' && <p className="form-ok">Listo. Quedó registrado como lead medible en marketing.</p>}
+      {state === 'sent' && <p className="form-ok">Listo. Quedó registrado como consulta medible en marketing.</p>}
       {state === 'error' && <p className="form-error">No se pudo registrar. Probá WhatsApp o reintentá.</p>}
     </form>
   );
@@ -232,8 +232,8 @@ function PropertyModal({ property, onClose }: { property: Property | null; onClo
             <h3>Flujo conectado</h3>
             <ol>
               <li>Consulta capturada desde ficha publica.</li>
-              <li>Lead entra al CRM con fuente y propiedad.</li>
-              <li>Se abre caso de reserva, alquiler o venta.</li>
+              <li>La consulta entra al seguimiento con fuente y propiedad.</li>
+              <li>Se arma una carpeta comercial para la reserva, alquiler o venta.</li>
               <li>Se genera documento: reserva, autorizacion, boleto o contrato.</li>
             </ol>
           </div>
@@ -343,7 +343,7 @@ function Copilot() {
     const match = copilotKnowledge.find((item) => item.intent.some((keyword) => normalized.includes(keyword)));
     const fallback = {
       title: 'Siguiente mejor accion',
-      answer: 'Para vender InmoPub, llevá la conversacion al flujo completo: propiedad publicada, lead capturado, caso creado, documento generado y seguimiento medido. Si la inmobiliaria usa planillas o WhatsApp suelto, hay dolor claro.',
+      answer: 'Para vender InmoPub, llevá la conversacion al flujo completo: propiedad publicada, consulta capturada, carpeta comercial creada, documento generado y seguimiento medido. Si la inmobiliaria usa planillas o WhatsApp suelto, hay dolor claro.',
     };
     const wantsContact = ['demo', 'contacto', 'precio', 'plan', 'whatsapp', 'hablar', 'contactar', 'comprar'].some((keyword) => normalized.includes(keyword));
     setMessages((current) => [
@@ -414,7 +414,7 @@ export default function App() {
   const [operation, setOperation] = useState('');
 
   useEffect(() => {
-    document.title = 'InmoPub | Mini portal inmobiliario, CRM, documentos y casos';
+    document.title = 'InmoPub | Mini portal inmobiliario, consultas y documentos';
     track('VIEW', {
       actionCode: 'page_home',
       actionLabel: 'InmoPub landing',
@@ -488,9 +488,9 @@ export default function App() {
           <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=84" alt="" />
           <div className="hero-overlay" />
           <div className="hero-content">
-            <span className="eyebrow">Mini portal inmobiliario + CRM + documentos</span>
+            <span className="eyebrow">Mini portal inmobiliario + consultas + documentos</span>
             <h1>Publicá propiedades y convertí consultas en operaciones.</h1>
-            <p>InmoPub centraliza propiedades, interesados, visitas, expedientes y documentos comerciales. Menos planillas, menos WhatsApps perdidos, más seguimiento medible.</p>
+            <p>InmoPub centraliza propiedades, interesados, visitas y documentos comerciales. Menos planillas, menos WhatsApps perdidos, más seguimiento medible.</p>
             <div className="hero-actions">
               <a className="primary-button" href="#demo" data-track="hero_primary_demo" data-track-category="LEAD">Ver demo del flujo <ArrowRight size={18} /></a>
               <a className="secondary-button dark" href="#catalogo" data-track="hero_catalog" data-track-category="DISCOVERY">Explorar propiedades</a>
@@ -523,8 +523,8 @@ export default function App() {
             {[
               [Home, 'Propiedades', 'Venta, alquiler, temporario, fotos, amenities, estados y ficha publica compartible.'],
               [UserRoundCheck, 'Consultas', 'Interesados con fuente, prioridad, seguimiento, visitas y responsable comercial.'],
-              [ClipboardCheck, 'Gestion de casos', 'Reserva, autorizacion, boleto, contrato, entrega y documentacion asociada.'],
-              [FileText, 'Documentos', 'Plantillas comerciales con logo del tenant y variables del expediente.'],
+              [ClipboardCheck, 'Operaciones', 'Reserva, autorizacion, boleto, contrato, entrega y documentacion asociada.'],
+              [FileText, 'Documentos', 'Plantillas comerciales con tu logo y datos de la operación.'],
               [BarChart3, 'Panel comercial', 'Tiempos de respuesta, conversión, visitas, publicaciones y documentos emitidos.'],
               [Bot, 'Copiloto vendedor', 'Responde dudas, califica interesados, prepara demo y sugiere siguiente accion.'],
             ].map(([Icon, title, text]) => (
@@ -581,7 +581,7 @@ export default function App() {
           <div className="bi-card main">
             <span className="eyebrow">Panel de demo</span>
             <h2>Un panel que habla idioma inmobiliario.</h2>
-            <p>La demo vende cuando muestra control: publicaciones, consultas, visitas, casos, documentos y conversión.</p>
+            <p>La demo vende cuando muestra control: publicaciones, consultas, visitas, documentos y conversión.</p>
           </div>
           {([
             [Building2, bi.total, 'propiedades publicadas'],
@@ -601,7 +601,7 @@ export default function App() {
         <section className="section flow-section" id="demo">
           <div className="section-title">
             <span className="eyebrow">Demo de 90 segundos</span>
-            <h2>Del inmueble publicado al expediente listo para cerrar.</h2>
+            <h2>Del inmueble publicado a la operación lista para cerrar.</h2>
           </div>
           <div className="flow-grid">
             {funnelSteps.map((step, index) => (
@@ -624,18 +624,18 @@ export default function App() {
             </div>
             <h3>RESERVA DE COMPRA</h3>
             <p>En la ciudad de Buenos Aires, el interesado <mark>{'{{cliente}}'}</mark> formula reserva por la propiedad ubicada en <mark>{'{{domicilio}}'}</mark>, por el precio de <mark>{'{{precio}}'}</mark>.</p>
-            <p>La operacion queda vinculada al expediente <mark>{'{{caseId}}'}</mark>, con documentacion adjunta, estado comercial y trazabilidad de aprobaciones.</p>
+            <p>La operacion queda vinculada a una carpeta comercial, con documentacion adjunta, estado de avance y registro de aprobaciones.</p>
             <div className="signature-row"><span>Comprador</span><span>Vendedor</span><span>Inmobiliaria</span></div>
           </div>
           <div>
             <span className="eyebrow">Documentos comerciales</span>
-            <h2>CaseFlow por debajo, venta inmobiliaria por delante.</h2>
-            <p>El usuario no necesita pensar en “expedientes”: carga una propiedad, recibe un interesado y el sistema arma el caso con documentos editables.</p>
+            <h2>Documentos listos para vender, reservar o alquilar.</h2>
+            <p>La inmobiliaria carga una propiedad, recibe un interesado y el sistema prepara la documentación editable con los datos de la operación.</p>
             <ul className="check-list">
               <li><ShieldCheck size={18} /> Autorizacion de venta o alquiler</li>
               <li><ShieldCheck size={18} /> Reserva, recibo, boleto o contrato base</li>
-              <li><ShieldCheck size={18} /> Logo del tenant y datos institucionales</li>
-              <li><ShieldCheck size={18} /> Historial y versionado documental</li>
+              <li><ShieldCheck size={18} /> Logo y datos institucionales de la inmobiliaria</li>
+              <li><ShieldCheck size={18} /> Historial de cambios y versiones del documento</li>
             </ul>
           </div>
         </section>
@@ -644,7 +644,7 @@ export default function App() {
           <div>
             <span className="eyebrow">Lanzamiento InmoPub</span>
             <h2>Quiero una demo con mis propiedades y mi marca.</h2>
-            <p>Para venderlo fuerte, la primera demo deberia mostrar propiedades reales de la inmobiliaria, un lead simulado, caso de reserva y documento listo para enviar.</p>
+            <p>Para venderlo fuerte, la primera demo deberia mostrar propiedades reales de la inmobiliaria, una consulta simulada, una reserva y un documento listo para enviar.</p>
           </div>
           <LeadForm />
         </section>
@@ -652,7 +652,7 @@ export default function App() {
 
       <footer className="footer">
         <Logo />
-        <p>Producto vertical para inmobiliarias. Mini portal, CRM comercial, documentos y casos.</p>
+        <p>Producto vertical para inmobiliarias. Mini portal, seguimiento comercial y documentos.</p>
         <a href="https://diceprojects.com" target="_blank" rel="noreferrer" data-track="footer_diceprojects">by DiceProjects</a>
       </footer>
 

@@ -22,7 +22,7 @@ export const demoProperties: Property[] = [
     coveredArea: 132,
     totalArea: 168,
     amenities: ['Terraza', 'Parrilla', 'Cochera', 'Baulera', 'Apto credito'],
-    description: 'Unidad lista para publicar y vender con ficha profesional, lead tracking, reserva y documentacion comercial.',
+    description: 'Unidad lista para publicar y vender con ficha profesional, seguimiento de consultas, reserva y documentacion comercial.',
     imageUrl: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=84',
     featured: true,
     caseStage: 'Reserva en revision',
@@ -51,7 +51,7 @@ export const demoProperties: Property[] = [
     coveredArea: 310,
     totalArea: 780,
     amenities: ['Vista al lago', 'Pileta', 'Seguridad', 'Parrilla', 'Dependencia'],
-    description: 'Propiedad de alto valor con seguimiento de interesados, visitas, expediente y documentacion de operacion.',
+    description: 'Propiedad de alto valor con seguimiento de interesados, visitas y documentacion de operacion.',
     imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=84',
     featured: true,
     caseStage: 'Carpeta comercial abierta',
@@ -210,15 +210,15 @@ export const funnelSteps = [
   },
   {
     title: 'Captar',
-    text: 'El interesado consulta desde ficha publica, WhatsApp o formulario y entra al CRM con trazabilidad.',
+    text: 'El interesado consulta desde ficha publica, WhatsApp o formulario y entra al seguimiento comercial con trazabilidad.',
   },
   {
     title: 'Operar',
-    text: 'Se agenda visita, cambia estado del lead, se abre caso y se genera documentacion comercial.',
+    text: 'Se agenda visita, cambia el estado de la consulta y se genera documentacion comercial.',
   },
   {
     title: 'Cerrar',
-    text: 'Reserva, autorizacion, boleto o contrato se generan con datos del expediente y quedan adjuntos.',
+    text: 'Reserva, autorizacion, boleto o contrato se generan con datos de la operacion y quedan adjuntos.',
   },
 ];
 
@@ -231,7 +231,7 @@ export const copilotKnowledge = [
   {
     intent: ['demo', 'mostrar', 'presentacion', 'vender'],
     title: 'Demo recomendada',
-    answer: 'La demo ganadora dura 90 segundos: cargar propiedad, publicar ficha, simular consulta, convertirla en lead, abrir caso de reserva y generar documento comercial. Ese flujo demuestra valor operativo y comercial sin explicar menus.',
+    answer: 'La demo ganadora dura 90 segundos: cargar propiedad, publicar ficha, simular consulta, priorizarla, preparar una reserva y generar documento comercial. Ese flujo demuestra valor operativo y comercial sin explicar menus.',
   },
   {
     intent: ['roi', 'retorno', 'conversion', 'vende'],
@@ -239,9 +239,9 @@ export const copilotKnowledge = [
     answer: 'El retorno aparece cuando se responde rapido, no se pierden consultas y se elimina doble carga. Si una inmobiliaria recupera apenas 2 operaciones por mes o evita 20 horas operativas, el software se paga solo. El punto fuerte es medir consultas, tiempos de respuesta, visitas y documentos emitidos.',
   },
   {
-    intent: ['documento', 'contrato', 'reserva', 'boleto', 'caso'],
-    title: 'Propiedades + gestion de casos',
-    answer: 'Cada operacion puede abrir un caso: reserva, autorizacion de venta/alquiler, boleto, contrato, entrega de llaves o documentacion de escribania. El copiloto no guarda sin confirmacion: previsualiza datos, pide faltantes y genera el documento para revisar.',
+    intent: ['documento', 'contrato', 'reserva', 'boleto', 'operacion'],
+    title: 'Propiedades + documentos',
+    answer: 'Cada operacion puede preparar reserva, autorizacion de venta/alquiler, boleto, contrato, entrega de llaves o documentacion de escribania. El copiloto no guarda sin confirmacion: previsualiza datos, pide faltantes y genera el documento para revisar.',
   },
   {
     intent: ['marketing', 'campana', 'medir', 'ads'],
