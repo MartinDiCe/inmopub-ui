@@ -24,24 +24,20 @@ import {
   UserRoundCheck,
   X,
 } from 'lucide-react';
-import { copilotKnowledge, defaultRoiInputs, demoProperties, funnelSteps, marketInsights } from './data';
+import { copilotKnowledge, defaultRoiInputs, demoProperties, marketInsights } from './data';
 import { fetchProperties, submitPropertyLead } from './propertiesApi';
 import { calculateRoi, money } from './roi';
 import { appConfig, bindGlobalClickTracking, bindScrollDepthTracking, getCookieConsent, setCookieConsent, submitLead, track } from './marketing';
+import { useLocale } from './i18n/LocaleContext';
+import type { Locale } from './i18n/messages';
 import type { CopilotMessage, OperationType, Property, RoiInputs } from './types';
 import type { LucideIcon } from 'lucide-react';
 
-const operationLabels: Record<OperationType, string> = {
-  SALE: 'Venta',
-  RENT: 'Alquiler',
-  TEMPORARY_RENT: 'Temporario',
-};
-
 const quickFilters = [
-  { label: 'Venta CABA', operationType: 'SALE', city: 'Ciudad Autonoma de Buenos Aires' },
-  { label: 'Alquiler', operationType: 'RENT' },
-  { label: 'Casas premium', propertyType: 'Casa' },
-  { label: 'Temporarios', operationType: 'TEMPORARY_RENT' },
+  { labelKey: 'saleCaba', operationType: 'SALE', city: 'Ciudad Autonoma de Buenos Aires' },
+  { labelKey: 'rent', operationType: 'RENT' },
+  { labelKey: 'premiumHomes', propertyType: 'Casa' },
+  { labelKey: 'temporary', operationType: 'TEMPORARY_RENT' },
 ];
 
 function normalize(value: string) {
@@ -53,7 +49,16 @@ function formatPrice(property: Property) {
   return money(property.price, property.currency);
 }
 
+function localeLabel(...parts: string[]) {
+  return parts.filter(Boolean).join(' ');
+}
+
+function localizedPath(locale: Locale, path: string) {
+  return locale === 'es' ? path : `/${locale}${path === '/' ? '' : path}`;
+}
+
 function Logo() {
+  const { t } = useLocale();
   return (
     <a href="#inicio" className="brand" data-track="nav_logo" data-track-category="NAV">
       <span className="brand-mark">
@@ -62,13 +67,32 @@ function Logo() {
       </span>
       <span>
         <strong>Inmo</strong>Pub
-        <small>by DiceProjects</small>
+        <small>{t.footer.body.includes('imobili') ? 'by DiceProjects' : 'by DiceProjects'}</small>
       </span>
     </a>
   );
 }
 
+function LanguageSelector() {
+  const { locale, setLocale } = useLocale();
+  return (
+    <div className="language-selector" aria-label="Language selector">
+      {(['es', 'en', 'pt'] as Locale[]).map((item) => (
+        <button key={item} type="button" className={locale === item ? 'active' : ''} onClick={() => setLocale(item)}>
+          {item.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function PropertyCard({ property, onSelect }: { property: Property; onSelect: (property: Property) => void }) {
+  const { t } = useLocale();
+  const operationLabels: Record<OperationType, string> = {
+    SALE: t.catalog.sale,
+    RENT: t.catalog.rent,
+    TEMPORARY_RENT: t.catalog.temporary,
+  };
   return (
     <article className="property-card">
       <button
@@ -81,7 +105,7 @@ function PropertyCard({ property, onSelect }: { property: Property; onSelect: (p
       >
         <img src={property.imageUrl} alt={property.title} loading="lazy" />
         <span className="property-badge">{operationLabels[property.operationType]}</span>
-        {property.featured && <span className="property-featured">Destacada</span>}
+        {property.featured && <span className="property-featured">{t.catalog.featured}</span>}
       </button>
       <div className="property-body">
         <div>
@@ -114,7 +138,7 @@ function PropertyCard({ property, onSelect }: { property: Property; onSelect: (p
           data-track-category="CATALOG"
           data-track-label={property.title}
         >
-          Ver ficha vendible <ChevronRight size={16} />
+          {t.catalog.openCard} <ChevronRight size={16} />
         </button>
       </div>
     </article>
@@ -122,6 +146,7 @@ function PropertyCard({ property, onSelect }: { property: Property; onSelect: (p
 }
 
 function LeadForm({ property, onClose }: { property?: Property; onClose?: () => void }) {
+  const { t } = useLocale();
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -174,49 +199,55 @@ function LeadForm({ property, onClose }: { property?: Property; onClose?: () => 
     <form className="lead-form" onSubmit={handleSubmit}>
       <div className="form-grid">
         <label>
-          Nombre
-          <input name="fullName" required placeholder="Ej. Mariana Gomez" />
+          {t.form.name}
+          <input name="fullName" required placeholder={t.form.namePh} />
         </label>
         <label>
-          Email
-          <input name="email" required type="email" placeholder="mariana@inmobiliaria.com" />
+          {t.form.email}
+          <input name="email" required type="email" placeholder={t.form.emailPh} />
         </label>
         <label>
-          WhatsApp
-          <input name="phone" placeholder="+54 9 11..." />
+          {t.form.whatsapp}
+          <input name="phone" placeholder={t.form.phonePh} />
         </label>
         <label>
-          Inmobiliaria
-          <input name="company" placeholder="Nombre de la empresa" />
+          {t.form.company}
+          <input name="company" placeholder={t.form.companyPh} />
         </label>
       </div>
       <label>
-        Mensaje
-        <textarea name="message" placeholder={property ? 'Quiero coordinar visita y recibir ficha.' : 'Quiero una demo con propiedades, consultas y documentos.'} />
+        {t.form.message}
+        <textarea name="message" placeholder={property ? t.form.propertyMsg : t.form.demoMsg} />
       </label>
       <div className="form-actions">
-        {onClose && <button type="button" className="secondary-button" onClick={onClose}>Cerrar</button>}
+        {onClose && <button type="button" className="secondary-button" onClick={onClose}>{t.form.close}</button>}
         <button className="primary-button" disabled={state === 'sending'}>
-          {state === 'sending' ? 'Enviando...' : 'Pedir demo'} <ArrowRight size={17} />
+          {state === 'sending' ? t.form.sending : t.form.submit} <ArrowRight size={17} />
         </button>
       </div>
-      {state === 'sent' && <p className="form-ok">Listo. Quedó registrado como consulta medible en marketing.</p>}
-      {state === 'error' && <p className="form-error">No se pudo registrar. Probá WhatsApp o reintentá.</p>}
+      {state === 'sent' && <p className="form-ok">{t.form.ok}</p>}
+      {state === 'error' && <p className="form-error">{t.form.error}</p>}
     </form>
   );
 }
 
 function PropertyModal({ property, onClose }: { property: Property | null; onClose: () => void }) {
+  const { t } = useLocale();
+  const operationLabels: Record<OperationType, string> = {
+    SALE: t.catalog.sale,
+    RENT: t.catalog.rent,
+    TEMPORARY_RENT: t.catalog.temporary,
+  };
   if (!property) return null;
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="property-modal">
-        <button className="modal-close" onClick={onClose} aria-label="Cerrar"><X size={20} /></button>
+        <button className="modal-close" onClick={onClose} aria-label={t.modal.close}><X size={20} /></button>
         <div className="modal-media">
           <img src={property.imageUrl} alt={property.title} />
           <div className="modal-score">
             <strong>{property.leadScore}</strong>
-            <span>interés comercial</span>
+            <span>{t.modal.score}</span>
           </div>
         </div>
         <div className="modal-content">
@@ -224,17 +255,14 @@ function PropertyModal({ property, onClose }: { property: Property | null; onClo
           <h2>{property.title}</h2>
           <p className="modal-description">{property.description}</p>
           <div className="modal-metrics">
-            <span><strong>{formatPrice(property)}</strong> precio</span>
-            <span><strong>{property.daysPublished}</strong> dias publicada</span>
-            <span><strong>{property.amenities.length}</strong> atributos</span>
+            <span><strong>{formatPrice(property)}</strong> {t.modal.price}</span>
+            <span><strong>{property.daysPublished}</strong> {t.modal.days}</span>
+            <span><strong>{property.amenities.length}</strong> {t.modal.attributes}</span>
           </div>
           <div className="case-preview">
-            <h3>Flujo conectado</h3>
+            <h3>{t.modal.flowTitle}</h3>
             <ol>
-              <li>Consulta capturada desde ficha publica.</li>
-              <li>La consulta entra al seguimiento con fuente y propiedad.</li>
-              <li>Se arma una carpeta comercial para la reserva, alquiler o venta.</li>
-              <li>Se genera documento: reserva, autorizacion, boleto o contrato.</li>
+              {t.modal.flow.map((item) => <li key={item}>{item}</li>)}
             </ol>
           </div>
           <LeadForm property={property} onClose={onClose} />
@@ -245,6 +273,7 @@ function PropertyModal({ property, onClose }: { property: Property | null; onClo
 }
 
 function RoiCalculator() {
+  const { t } = useLocale();
   const [inputs, setInputs] = useState<RoiInputs>(defaultRoiInputs);
   const result = useMemo(() => calculateRoi(inputs), [inputs]);
 
@@ -264,19 +293,19 @@ function RoiCalculator() {
   return (
     <section className="section roi-section" id="roi">
       <div className="section-title">
-        <span className="eyebrow">Simulador comercial</span>
-        <h2>Mostrá cuánto puede ganar una inmobiliaria ordenando su operación.</h2>
-        <p>Ajustá los supuestos de una inmobiliaria real y estimá el impacto de responder mejor, no perder consultas y generar documentos sin doble carga.</p>
+        <span className="eyebrow">{t.roi.eyebrow}</span>
+        <h2>{t.roi.title}</h2>
+        <p>{t.roi.body}</p>
       </div>
       <div className="roi-grid">
         <div className="roi-inputs">
           {[
-            ['properties', 'Cartera publicada', 10, 300],
-            ['monthlyLeads', 'Consultas por mes', 20, 1200],
-            ['conversionRate', 'Consultas que cierran (%)', 0.2, 4],
-            ['averageCommission', 'Ingreso promedio por cierre', 300, 12000],
-            ['adminHoursPerWeek', 'Horas semanales de carga manual', 2, 80],
-            ['hourlyCost', 'Costo estimado por hora', 4, 50],
+            ['properties', t.roi.inputs.properties, 10, 300],
+            ['monthlyLeads', t.roi.inputs.monthlyLeads, 20, 1200],
+            ['conversionRate', t.roi.inputs.conversionRate, 0.2, 4],
+            ['averageCommission', t.roi.inputs.averageCommission, 300, 12000],
+            ['adminHoursPerWeek', t.roi.inputs.adminHoursPerWeek, 2, 80],
+            ['hourlyCost', t.roi.inputs.hourlyCost, 4, 50],
           ].map(([field, label, min, max]) => (
             <label key={field as string}>
               <span>{label}</span>
@@ -291,17 +320,17 @@ function RoiCalculator() {
               <strong>{inputs[field as keyof RoiInputs]}</strong>
             </label>
           ))}
-          <p className="roi-note">Los controles son editables para simular una inmobiliaria chica, mediana o premium antes de pedir la demo.</p>
+          <p className="roi-note">{t.roi.note}</p>
         </div>
         <div className="roi-output">
           <Calculator size={30} />
           <h3>{money(result.totalMonthlyImpact)}</h3>
-          <p>impacto mensual estimado entre consultas mejor atendidas, cierres adicionales y tiempo operativo recuperado.</p>
+          <p>{t.roi.impact}</p>
           <div className="roi-cards">
-            <span><strong>{result.recoveredLeads}</strong> consultas recuperadas</span>
-            <span><strong>{result.extraDeals}</strong> cierres estimados</span>
-            <span><strong>{money(result.extraRevenue)}</strong> ingreso potencial</span>
-            <span><strong>{money(result.adminSavings)}</strong> tiempo recuperado</span>
+            <span><strong>{result.recoveredLeads}</strong> {t.roi.cards.recovered}</span>
+            <span><strong>{result.extraDeals}</strong> {t.roi.cards.deals}</span>
+            <span><strong>{money(result.extraRevenue)}</strong> {t.roi.cards.revenue}</span>
+            <span><strong>{money(result.adminSavings)}</strong> {t.roi.cards.savings}</span>
           </div>
         </div>
       </div>
@@ -310,14 +339,15 @@ function RoiCalculator() {
 }
 
 function Copilot() {
+  const { locale, t } = useLocale();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<CopilotMessage[]>([{
     id: 'welcome',
     sender: 'bot',
-    title: 'Copiloto InmoPub',
-    text: 'Soy asesor inmobiliario y consultor comercial de InmoPub. Puedo orientar sobre publicación de propiedades, consultas, visitas, reservas, documentos y también ayudarte a vender la demo.',
-    prompts: ['Quiero una demo', 'Como atiendo una consulta', 'Que documentos genera', 'Hablar por WhatsApp'],
+    title: t.copilot.welcomeTitle,
+    text: t.copilot.welcome,
+    prompts: t.copilot.prompts,
   }]);
 
   function answer(value: string) {
@@ -338,12 +368,42 @@ function Copilot() {
         category: 'LEAD',
         metadata: { question: text },
       });
-      window.open(`${appConfig.whatsappUrl}?text=${encodeURIComponent('Hola, quiero una demo de InmoPub para mi inmobiliaria.')}`, '_blank', 'noopener,noreferrer');
+      window.open(`${appConfig.whatsappUrl}?text=${encodeURIComponent(t.copilot.whatsappText)}`, '_blank', 'noopener,noreferrer');
     }
-    const match = copilotKnowledge.find((item) => item.intent.some((keyword) => normalized.includes(keyword)));
+    const localizedKnowledge = locale === 'es' ? copilotKnowledge : [
+      {
+        intent: ['demo', 'show', 'presentation', 'vender', 'mostrar'],
+        title: locale === 'pt' ? 'Demo recomendada' : 'Recommended demo',
+        answer: locale === 'pt'
+          ? 'A demo vencedora mostra o fluxo completo: publicar imóvel, simular consulta, qualificar o interessado, preparar reserva e gerar documento comercial.'
+          : 'The winning demo shows the full flow: publish a property, simulate an inquiry, qualify the prospect, prepare a reservation and generate a commercial document.',
+      },
+      {
+        intent: ['document', 'contract', 'reserva', 'contrato', 'documento'],
+        title: locale === 'pt' ? 'Imóveis + documentos' : 'Properties + documents',
+        answer: locale === 'pt'
+          ? 'Cada operação pode preparar reserva, autorização, proposta ou contrato. O copiloto pré-visualiza dados, pede faltantes e deixa a emissão para confirmação humana.'
+          : 'Each deal can prepare a reservation, authorization, offer or contract. The copilot previews data, asks for missing fields and leaves issuance for human confirmation.',
+      },
+      {
+        intent: ['lead', 'consulta', 'interested', 'cliente', 'contacto', 'contato'],
+        title: locale === 'pt' ? 'Atendimento profissional de consultas' : 'Professional inquiry handling',
+        answer: locale === 'pt'
+          ? 'A melhor resposta confirma necessidade, orçamento, zona, urgência e disponibilidade para visita. InmoPub associa cada consulta ao imóvel, fonte e responsável.'
+          : 'The best response confirms need, budget, area, urgency and visit availability. InmoPub links every inquiry to the property, source and owner.',
+      },
+      {
+        intent: ['roi', 'return', 'retorno', 'conversion', 'conversao', 'conversion'],
+        title: locale === 'pt' ? 'Retorno comercial' : 'Commercial return',
+        answer: locale === 'pt'
+          ? 'O retorno aparece ao responder rápido, recuperar consultas e reduzir dupla carga. Acompanhe consultas, visitas, documentos emitidos e operações fechadas.'
+          : 'Return comes from faster responses, recovered inquiries and less duplicate work. Track inquiries, visits, issued documents and closed deals.',
+      },
+    ];
+    const match = localizedKnowledge.find((item) => item.intent.some((keyword) => normalized.includes(keyword)));
     const fallback = {
-      title: 'Siguiente mejor accion',
-      answer: 'Como asesor inmobiliario, llevaria la conversacion al siguiente paso concreto: entender la propiedad, calificar al interesado, coordinar visita y preparar la documentacion. Para vender InmoPub, mostrá ese mismo flujo completo en la demo.',
+      title: t.copilot.nextTitle,
+      answer: t.copilot.nextAnswer,
     };
     const wantsContact = ['demo', 'contacto', 'precio', 'plan', 'whatsapp', 'hablar', 'contactar', 'comprar'].some((keyword) => normalized.includes(keyword));
     setMessages((current) => [
@@ -354,7 +414,7 @@ function Copilot() {
         sender: 'bot',
         title: match?.title || fallback.title,
         text: match?.answer || fallback.answer,
-        prompts: ['Agendar demo', 'Ver propiedades demo', 'Como cerrar una visita', 'Hablar por WhatsApp'],
+        prompts: t.copilot.followPrompts,
         showLeadForm: wantsContact,
       },
     ]);
@@ -365,8 +425,8 @@ function Copilot() {
       {open && (
         <div className="copilot-panel">
           <div className="copilot-head">
-            <span><Bot size={18} /> InmoPub Copilot</span>
-            <button onClick={() => setOpen(false)} aria-label="Cerrar copiloto"><X size={18} /></button>
+            <span><Bot size={18} /> {t.copilot.title}</span>
+            <button onClick={() => setOpen(false)} aria-label={t.modal.close}><X size={18} /></button>
           </div>
           <div className="copilot-body">
             {messages.map((message) => (
@@ -385,7 +445,7 @@ function Copilot() {
             ))}
           </div>
           <form className="copilot-input" onSubmit={(event) => { event.preventDefault(); answer(input); }}>
-            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Preguntame por venta, alquiler, visitas, documentos o demo..." />
+            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder={t.copilot.input} />
             <button><Send size={17} /></button>
           </form>
         </div>
@@ -400,7 +460,7 @@ function Copilot() {
         data-track-category="COPILOT"
       >
         <Sparkles size={22} />
-        <span>Copiloto</span>
+        <span>{t.copilot.fab}</span>
       </button>
     </div>
   );
@@ -408,69 +468,16 @@ function Copilot() {
 
 type LegalPageKey = 'legal' | 'privacidad' | 'cookies' | 'terminos' | 'aviso-legal';
 
-const legalPages: Record<LegalPageKey, { title: string; updated: string; sections: Array<[string, string]> }> = {
-  legal: {
-    title: 'Legal y transparencia',
-    updated: '25 Jun 2026',
-    sections: [
-      ['Marco legal', 'InmoPub es un sitio comercial de DiceProjects orientado a mostrar una solución vertical para inmobiliarias. En esta sección reunimos las políticas aplicables al uso del sitio, formularios, medición de campañas, cookies y contacto comercial.'],
-      ['Documentos disponibles', 'Podés consultar los términos y condiciones, política de privacidad, política de cookies y aviso legal desde los enlaces al pie del sitio.'],
-      ['Contacto legal', 'Para consultas legales o de privacidad escribinos a legal@diceprojects.com.'],
-    ],
-  },
-  privacidad: {
-    title: 'Política de privacidad',
-    updated: '25 Jun 2026',
-    sections: [
-      ['Alcance', 'Esta política aplica al sitio web InmoPub, a sus formularios comerciales, eventos de marketing, consultas por propiedades demo o publicadas y comunicaciones derivadas.'],
-      ['Datos que podemos tratar', 'Podemos procesar nombre, email, teléfono, inmobiliaria, mensaje, propiedad consultada, URL de origen, campaña, fuente UTM, identificador de visitante, interacción con formularios, clicks, búsquedas, filtros, uso del simulador y preguntas realizadas al copiloto.'],
-      ['Finalidad', 'Usamos la información para responder consultas, coordinar demos, medir campañas, mejorar la experiencia, entender intención comercial, derivar oportunidades a canales de contacto y proteger la operación del sitio.'],
-      ['Servicios conectados', 'El sitio puede integrarse con APIs de DiceProjects para marketing, propiedades, formularios y WhatsApp. Los datos enviados voluntariamente por formularios se usan para contacto comercial y seguimiento.'],
-      ['Conservación', 'Conservamos los datos mientras sean necesarios para operar campañas, responder consultas, auditar actividad, prestar servicios o cumplir obligaciones aplicables. Luego pueden eliminarse, anonimizarse o mantenerse sólo cuando corresponda técnica o legalmente.'],
-      ['Derechos', 'Podés solicitar acceso, rectificación o eliminación de tus datos escribiendo a legal@diceprojects.com o mdice@diceprojects.com.'],
-    ],
-  },
-  cookies: {
-    title: 'Política de cookies',
-    updated: '25 Jun 2026',
-    sections: [
-      ['Qué son', 'Las cookies y tecnologías similares son pequeños datos que permiten recordar preferencias, medir uso del sitio y mejorar la experiencia. InmoPub usa principalmente localStorage y eventos web propios.'],
-      ['Cookies esenciales', 'Son necesarias para que el sitio funcione, por ejemplo recordar la preferencia del banner de cookies o mantener funcionalidades básicas del navegador.'],
-      ['Medición y marketing', 'Con tu consentimiento, podemos medir vistas, clicks, scroll, búsquedas, filtros, propiedades abiertas, preguntas al copiloto, simulaciones comerciales y formularios. Esto ayuda a optimizar campañas y entender intención real.'],
-      ['Control', 'Podés aceptar o rechazar cookies no esenciales desde el banner. También podés borrar datos del sitio desde la configuración del navegador. Si rechazás, el sitio seguirá funcionando, pero no enviaremos eventos de marketing automáticos.'],
-    ],
-  },
-  terminos: {
-    title: 'Términos y condiciones',
-    updated: '25 Jun 2026',
-    sections: [
-      ['Aceptación', 'Al navegar InmoPub aceptás estos términos. Si no estás de acuerdo, podés dejar de usar el sitio.'],
-      ['Uso del sitio', 'InmoPub muestra información comercial, demos, propiedades de ejemplo o publicadas, simuladores y formularios de contacto. La información puede cambiar sin aviso previo.'],
-      ['No asesoramiento legal o inmobiliario vinculante', 'El contenido del sitio y del copiloto tiene finalidad informativa y comercial. Las operaciones inmobiliarias reales deben ser revisadas por profesionales habilitados, escribanos, abogados o asesores correspondientes.'],
-      ['Disponibilidad', 'Hacemos esfuerzos razonables para mantener el sitio disponible, pero no garantizamos operación ininterrumpida ni ausencia total de errores.'],
-      ['Propiedad intelectual', 'El sitio, marca, textos, diseños, código y materiales pertenecen a DiceProjects o a sus respectivos titulares. No se permite copiar, distribuir o explotar comercialmente el contenido sin autorización.'],
-    ],
-  },
-  'aviso-legal': {
-    title: 'Aviso legal',
-    updated: '25 Jun 2026',
-    sections: [
-      ['Titularidad', 'InmoPub es un producto vertical presentado por DiceProjects. Contacto: mdice@diceprojects.com.'],
-      ['Responsabilidad', 'La información publicada se ofrece de buena fe con finalidad comercial e informativa. DiceProjects no garantiza que todo contenido esté libre de errores ni asume responsabilidad por decisiones tomadas únicamente sobre la base del sitio.'],
-      ['Enlaces externos', 'El sitio puede enlazar a WhatsApp, DiceProjects u otros recursos. No controlamos el contenido ni disponibilidad de sitios externos.'],
-      ['Jurisdicción', 'Estas condiciones se interpretan bajo normativa aplicable en Argentina, salvo que una relación contractual específica establezca otra cosa.'],
-    ],
-  },
-};
-
 function legalKeyFromPath(pathname: string): LegalPageKey | null {
-  const cleanPath = pathname.replace(/^\/+|\/+$/g, '') || '';
+  const parts = pathname.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
+  const cleanPath = (parts[0] === 'es' || parts[0] === 'en' || parts[0] === 'pt') ? (parts[1] || '') : (parts[0] || '');
   if (cleanPath === 'legal' || cleanPath === 'privacidad' || cleanPath === 'cookies' || cleanPath === 'terminos' || cleanPath === 'aviso-legal') return cleanPath;
   return null;
 }
 
 function LegalPage({ pageKey }: { pageKey: LegalPageKey }) {
-  const page = legalPages[pageKey];
+  const { locale, t } = useLocale();
+  const page = t.legalPages[pageKey];
   useEffect(() => {
     document.title = `${page.title} | InmoPub`;
   }, [page.title]);
@@ -479,18 +486,19 @@ function LegalPage({ pageKey }: { pageKey: LegalPageKey }) {
       <header className="topbar">
         <Logo />
         <nav>
-          <a href="/">Inicio</a>
-          <a href="/privacidad">Privacidad</a>
-          <a href="/cookies">Cookies</a>
-          <a href="/terminos">Términos</a>
+          <a href={localizedPath(locale, '/')}>{t.nav.home}</a>
+          <a href={localizedPath(locale, '/privacidad')}>{t.nav.privacy}</a>
+          <a href={localizedPath(locale, '/cookies')}>{t.nav.cookies}</a>
+          <a href={localizedPath(locale, '/terminos')}>{t.nav.terms}</a>
         </nav>
-        <a className="nav-cta" href="/#contacto">Ver demo</a>
+        <LanguageSelector />
+        <a className="nav-cta" href={`${localizedPath(locale, '/')}#contacto`}>{t.nav.seeDemo}</a>
       </header>
       <main className="legal-main">
         <section className="legal-hero">
-          <span className="eyebrow">InmoPub legal</span>
+          <span className="eyebrow">{page.eyebrow}</span>
           <h1>{page.title}</h1>
-          <p>Última actualización: {page.updated}</p>
+          <p>{page.updatedLabel}: 25 Jun 2026</p>
         </section>
         <section className="legal-content">
           {page.sections.map(([title, body]) => (
@@ -508,6 +516,7 @@ function LegalPage({ pageKey }: { pageKey: LegalPageKey }) {
 }
 
 function CookieBanner() {
+  const { t } = useLocale();
   const [visible, setVisible] = useState(() => getCookieConsent() === null);
   if (!visible) return null;
   const choose = (value: 'accepted' | 'rejected') => {
@@ -518,30 +527,31 @@ function CookieBanner() {
     }
   };
   return (
-    <div className="cookie-banner" role="region" aria-label="Aviso de cookies">
+    <div className="cookie-banner" role="region" aria-label={t.cookies.aria}>
       <div>
-        <strong>Cookies y medición</strong>
-        <p>Usamos cookies no esenciales sólo si aceptás para medir campañas, consultas, clicks y uso del copiloto. Podés seguir navegando aunque rechaces.</p>
+        <strong>{t.cookies.title}</strong>
+        <p>{t.cookies.body}</p>
       </div>
       <div className="cookie-actions">
-        <button type="button" className="secondary-button" onClick={() => choose('rejected')}>Rechazar</button>
-        <button type="button" className="primary-button" onClick={() => choose('accepted')}>Aceptar</button>
+        <button type="button" className="secondary-button" onClick={() => choose('rejected')}>{t.cookies.reject}</button>
+        <button type="button" className="primary-button" onClick={() => choose('accepted')}>{t.cookies.accept}</button>
       </div>
     </div>
   );
 }
 
 function FooterContent() {
+  const { locale, t } = useLocale();
   return (
     <footer className="footer">
       <Logo />
-      <p>Producto vertical para inmobiliarias. Mini portal, seguimiento comercial y documentos.</p>
+      <p>{t.footer.body}</p>
       <div className="footer-links">
-        <a href="/legal">Legal</a>
-        <a href="/privacidad">Privacidad</a>
-        <a href="/cookies">Cookies</a>
-        <a href="/terminos">Términos</a>
-        <a href="/aviso-legal">Aviso legal</a>
+        <a href={localizedPath(locale, '/legal')}>{t.footer.legal}</a>
+        <a href={localizedPath(locale, '/privacidad')}>{t.footer.privacy}</a>
+        <a href={localizedPath(locale, '/cookies')}>{t.footer.cookies}</a>
+        <a href={localizedPath(locale, '/terminos')}>{t.footer.terms}</a>
+        <a href={localizedPath(locale, '/aviso-legal')}>{t.footer.legalNotice}</a>
         <a href="https://diceprojects.com" target="_blank" rel="noreferrer" data-track="footer_diceprojects">by DiceProjects</a>
       </div>
     </footer>
@@ -549,16 +559,25 @@ function FooterContent() {
 }
 
 export default function App() {
+  const { t } = useLocale();
   const [properties, setProperties] = useState<Property[]>(demoProperties);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Property | null>(null);
   const [search, setSearch] = useState('');
   const [operation, setOperation] = useState('');
   const legalPageKey = legalKeyFromPath(window.location.pathname);
+  const quickFilterLabels = {
+    saleCaba: localeLabel(t.catalog.sale, 'CABA'),
+    rent: t.catalog.rent,
+    premiumHomes: t.product.features[0]?.title === 'Properties' ? 'Premium homes' : t.product.features[0]?.title === 'Imóveis' ? 'Casas premium' : 'Casas premium',
+    temporary: t.catalog.temporary,
+  };
 
   useEffect(() => {
     if (legalPageKey) return;
-    document.title = 'InmoPub | Mini portal inmobiliario, consultas y documentos';
+    document.title = t.meta.title;
+    const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (description) description.content = t.meta.description;
     track('VIEW', {
       actionCode: 'page_home',
       actionLabel: 'InmoPub landing',
@@ -572,7 +591,7 @@ export default function App() {
       unbindClick();
       unbindScroll();
     };
-  }, [legalPageKey]);
+  }, [legalPageKey, t.meta.description, t.meta.title]);
 
   if (legalPageKey) return <LegalPage pageKey={legalPageKey} />;
 
@@ -621,12 +640,13 @@ export default function App() {
       <header className="topbar">
         <Logo />
         <nav>
-          <a href="#producto" data-track="nav_producto">Producto</a>
-          <a href="#catalogo" data-track="nav_catalogo">Catálogo</a>
-          <a href="#roi" data-track="nav_roi">Simulador</a>
-          <a href="#demo" data-track="nav_demo">Demo</a>
+          <a href="#producto" data-track="nav_producto">{t.nav.product}</a>
+          <a href="#catalogo" data-track="nav_catalogo">{t.nav.catalog}</a>
+          <a href="#roi" data-track="nav_roi">{t.nav.simulator}</a>
+          <a href="#demo" data-track="nav_demo">{t.nav.demo}</a>
         </nav>
-        <a className="nav-cta" href="#contacto" data-track="header_demo_cta" data-track-category="LEAD">Ver demo</a>
+        <LanguageSelector />
+        <a className="nav-cta" href="#contacto" data-track="header_demo_cta" data-track-category="LEAD">{t.nav.seeDemo}</a>
       </header>
 
       <main>
@@ -634,17 +654,17 @@ export default function App() {
           <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=84" alt="" />
           <div className="hero-overlay" />
           <div className="hero-content">
-            <span className="eyebrow">Mini portal inmobiliario + consultas + documentos</span>
-            <h1>Publicá propiedades y convertí consultas en operaciones.</h1>
-            <p>InmoPub centraliza propiedades, interesados, visitas y documentos comerciales. Menos planillas, menos WhatsApps perdidos, más seguimiento medible.</p>
+            <span className="eyebrow">{t.hero.eyebrow}</span>
+            <h1>{t.hero.title}</h1>
+            <p>{t.hero.body}</p>
             <div className="hero-actions">
-              <a className="primary-button" href="#demo" data-track="hero_primary_demo" data-track-category="LEAD">Ver demo del flujo <ArrowRight size={18} /></a>
-              <a className="secondary-button dark" href="#catalogo" data-track="hero_catalog" data-track-category="DISCOVERY">Explorar propiedades</a>
+              <a className="primary-button" href="#demo" data-track="hero_primary_demo" data-track-category="LEAD">{t.hero.primary} <ArrowRight size={18} /></a>
+              <a className="secondary-button dark" href="#catalogo" data-track="hero_catalog" data-track-category="DISCOVERY">{t.hero.secondary}</a>
             </div>
             <div className="proof-row">
-              <span><CheckCircle2 size={17} /> Ficha publica con logo</span>
-              <span><CheckCircle2 size={17} /> Leads y seguimiento</span>
-              <span><CheckCircle2 size={17} /> Casos y documentos</span>
+              <span><CheckCircle2 size={17} /> {t.hero.proofLogo}</span>
+              <span><CheckCircle2 size={17} /> {t.hero.proofLeads}</span>
+              <span><CheckCircle2 size={17} /> {t.hero.proofCases}</span>
             </div>
           </div>
         </section>
@@ -661,23 +681,23 @@ export default function App() {
 
         <section className="section product-grid" id="producto">
           <div className="section-title left">
-            <span className="eyebrow">Producto vertical</span>
-            <h2>No compite contra portales masivos. Convierte tu operacion en un mini portal vendible.</h2>
-            <p>La propuesta es simple: una inmobiliaria carga, publica, mide, atiende y documenta desde un flujo profesional propio.</p>
+            <span className="eyebrow">{t.product.eyebrow}</span>
+            <h2>{t.product.title}</h2>
+            <p>{t.product.body}</p>
           </div>
           <div className="feature-grid">
             {[
-              [Home, 'Propiedades', 'Venta, alquiler, temporario, fotos, amenities, estados y ficha publica compartible.'],
-              [UserRoundCheck, 'Consultas', 'Interesados con fuente, prioridad, seguimiento, visitas y responsable comercial.'],
-              [ClipboardCheck, 'Operaciones', 'Reserva, autorizacion, boleto, contrato, entrega y documentacion asociada.'],
-              [FileText, 'Documentos', 'Plantillas comerciales con tu logo y datos de la operación.'],
-              [BarChart3, 'Panel comercial', 'Tiempos de respuesta, conversión, visitas, publicaciones y documentos emitidos.'],
-              [Bot, 'Copiloto inmobiliario', 'Opera consultas y documentos con flujos seguros; suma IA para vender, calificar y responder mejor.'],
-            ].map(([Icon, title, text]) => (
-              <article className="feature-card" key={title as string}>
+              Home,
+              UserRoundCheck,
+              ClipboardCheck,
+              FileText,
+              BarChart3,
+              Bot,
+            ].map((Icon, index) => (
+              <article className="feature-card" key={t.product.features[index].title}>
                 <Icon size={26} />
-                <h3>{title as string}</h3>
-                <p>{text as string}</p>
+                <h3>{t.product.features[index].title}</h3>
+                <p>{t.product.features[index].text}</p>
               </article>
             ))}
           </div>
@@ -685,28 +705,28 @@ export default function App() {
 
         <section className="section copilot-product-section" id="copiloto">
           <div className="section-title left">
-            <span className="eyebrow">Copiloto como servicio</span>
-            <h2>Un asistente inmobiliario que vende, pero no improvisa operaciones.</h2>
-            <p>InmoPub combina flujos determinísticos para ejecutar tareas del negocio con IA opcional para interpretar mensajes, redactar respuestas y preparar la mejor demo comercial.</p>
+            <span className="eyebrow">{t.copilotSection.eyebrow}</span>
+            <h2>{t.copilotSection.title}</h2>
+            <p>{t.copilotSection.body}</p>
           </div>
           <div className="copilot-product-grid">
             <article data-track="copilot_without_ai" data-track-category="COPILOT">
               <ShieldCheck size={24} />
-              <span>Sin IA · Operativo</span>
-              <h3>Hace el trabajo repetible con reglas claras.</h3>
-              <p>Lista propiedades, filtra interesados, agenda visitas, arma reservas desde plantilla, pide datos faltantes y deja todo trazado por tenant, usuario y operación.</p>
+              <span>{t.copilotSection.cards[0].tag}</span>
+              <h3>{t.copilotSection.cards[0].title}</h3>
+              <p>{t.copilotSection.cards[0].text}</p>
             </article>
             <article data-track="copilot_with_ai" data-track-category="COPILOT">
               <Sparkles size={24} />
-              <span>Con IA · Comercial</span>
-              <h3>Ayuda a vender mejor sin guardar nada sin confirmación.</h3>
-              <p>Resume consultas largas, detecta intención, redacta respuestas, sugiere próximos pasos, prepara objeciones y guía al vendedor para cerrar visita, reserva o demo.</p>
+              <span>{t.copilotSection.cards[1].tag}</span>
+              <h3>{t.copilotSection.cards[1].title}</h3>
+              <p>{t.copilotSection.cards[1].text}</p>
             </article>
             <article data-track="copilot_sales_demo" data-track-category="COPILOT">
               <Bot size={24} />
-              <span>Demo y captación</span>
-              <h3>También actúa como asesor de venta de InmoPub.</h3>
-              <p>Explica el ROI, compara contra planillas y portales, califica leads de inmobiliarias y propone el flujo ideal: propiedad publicada, consulta, seguimiento y documento.</p>
+              <span>{t.copilotSection.cards[2].tag}</span>
+              <h3>{t.copilotSection.cards[2].title}</h3>
+              <p>{t.copilotSection.cards[2].text}</p>
             </article>
           </div>
         </section>
@@ -714,37 +734,37 @@ export default function App() {
         <section className="section catalog-section" id="catalogo">
           <div className="catalog-head">
             <div>
-              <span className="eyebrow">Catálogo inmobiliario</span>
-              <h2>Asi se ve una inmobiliaria usando InmoPub.</h2>
-              <p>Mostrá propiedades reales con filtros, ficha vendible, captura de interesados y seguimiento comercial desde el primer contacto.</p>
+              <span className="eyebrow">{t.catalog.eyebrow}</span>
+              <h2>{t.catalog.title}</h2>
+              <p>{t.catalog.body}</p>
             </div>
             <form className="search-box" onSubmit={handleSubmit}>
               <Search size={18} />
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar barrio, ciudad, titulo..." />
+              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t.catalog.search} />
               <select value={operation} onChange={(event) => setOperation(event.target.value)}>
-                <option value="">Operacion</option>
-                <option value="SALE">Venta</option>
-                <option value="RENT">Alquiler</option>
-                <option value="TEMPORARY_RENT">Temporario</option>
+                <option value="">{t.catalog.operation}</option>
+                <option value="SALE">{t.catalog.sale}</option>
+                <option value="RENT">{t.catalog.rent}</option>
+                <option value="TEMPORARY_RENT">{t.catalog.temporary}</option>
               </select>
-              <button><Filter size={17} /> Buscar</button>
+              <button><Filter size={17} /> {t.catalog.searchButton}</button>
             </form>
           </div>
           <div className="quick-filter-row">
             {quickFilters.map((filter) => (
               <button
-                key={filter.label}
+                key={filter.labelKey}
                 onClick={() => {
                   setOperation(filter.operationType || '');
                   void loadProperties(filter);
-                  track('FILTER', { actionCode: `quick_filter_${filter.label}`, actionLabel: filter.label, category: 'CATALOG', metadata: filter });
+                  track('FILTER', { actionCode: `quick_filter_${filter.labelKey}`, actionLabel: quickFilterLabels[filter.labelKey as keyof typeof quickFilterLabels], category: 'CATALOG', metadata: filter });
                 }}
               >
-                {filter.label}
+                {quickFilterLabels[filter.labelKey as keyof typeof quickFilterLabels]}
               </button>
             ))}
           </div>
-          {loading ? <div className="loading">Cargando propiedades...</div> : (
+          {loading ? <div className="loading">{t.catalog.loading}</div> : (
             <div className="property-grid">
               {properties.map((property) => <PropertyCard key={property.id} property={property} onSelect={handleSelect} />)}
             </div>
@@ -753,16 +773,16 @@ export default function App() {
 
         <section className="section bi-section">
           <div className="bi-card main">
-            <span className="eyebrow">Panel de demo</span>
-            <h2>Un panel que habla idioma inmobiliario.</h2>
-            <p>La demo vende cuando muestra control: publicaciones, consultas, visitas, documentos y conversión.</p>
+            <span className="eyebrow">{t.bi.eyebrow}</span>
+            <h2>{t.bi.title}</h2>
+            <p>{t.bi.body}</p>
           </div>
           {([
-            [Building2, bi.total, 'propiedades publicadas'],
-            [TrendingUp, bi.avgScore, 'interés comercial promedio'],
-            [MousePointerClick, bi.leads, 'consultas proyectadas'],
-            [Timer, bi.visits, 'visitas potenciales'],
-            [LineChart, `${bi.sales}/${bi.rent}`, 'venta / alquiler'],
+            [Building2, bi.total, t.bi.properties],
+            [TrendingUp, bi.avgScore, t.bi.score],
+            [MousePointerClick, bi.leads, t.bi.leads],
+            [Timer, bi.visits, t.bi.visits],
+            [LineChart, `${bi.sales}/${bi.rent}`, t.bi.saleRent],
           ] satisfies Array<[LucideIcon, string | number, string]>).map(([Icon, value, label]) => (
             <div className="bi-card" key={label as string}>
               <Icon size={24} />
@@ -774,11 +794,11 @@ export default function App() {
 
         <section className="section flow-section" id="demo">
           <div className="section-title">
-            <span className="eyebrow">Demo de 90 segundos</span>
-            <h2>Del inmueble publicado a la operación lista para cerrar.</h2>
+            <span className="eyebrow">{t.flow.eyebrow}</span>
+            <h2>{t.flow.title}</h2>
           </div>
           <div className="flow-grid">
-            {funnelSteps.map((step, index) => (
+            {t.flow.steps.map((step, index) => (
               <article key={step.title}>
                 <strong>{String(index + 1).padStart(2, '0')}</strong>
                 <h3>{step.title}</h3>
@@ -793,32 +813,29 @@ export default function App() {
         <section className="section document-section">
           <div className="document-preview">
             <div className="document-head">
-              <span>INMOBILIARIA DEMO</span>
-              <small>CUIT · Matricula · Domicilio · Email</small>
+              <span>{t.document.company}</span>
+              <small>{t.document.meta}</small>
             </div>
-            <h3>RESERVA DE COMPRA</h3>
-            <p>En la ciudad de Buenos Aires, el interesado <mark>{'{{cliente}}'}</mark> formula reserva por la propiedad ubicada en <mark>{'{{domicilio}}'}</mark>, por el precio de <mark>{'{{precio}}'}</mark>.</p>
-            <p>La operacion queda vinculada a una carpeta comercial, con documentacion adjunta, estado de avance y registro de aprobaciones.</p>
-            <div className="signature-row"><span>Comprador</span><span>Vendedor</span><span>Inmobiliaria</span></div>
+            <h3>{t.document.docTitle}</h3>
+            <p>{t.document.p1.split('{{cliente}}')[0]}<mark>{'{{cliente}}'}</mark>{t.document.p1.split('{{cliente}}')[1].split('{{domicilio}}')[0]}<mark>{'{{domicilio}}'}</mark>{t.document.p1.split('{{domicilio}}')[1].split('{{precio}}')[0]}<mark>{'{{precio}}'}</mark>{t.document.p1.split('{{precio}}')[1]}</p>
+            <p>{t.document.p2}</p>
+            <div className="signature-row"><span>{t.document.buyer}</span><span>{t.document.seller}</span><span>{t.document.agency}</span></div>
           </div>
           <div>
-            <span className="eyebrow">Documentos comerciales</span>
-            <h2>Documentos listos para vender, reservar o alquilar.</h2>
-            <p>La inmobiliaria carga una propiedad, recibe un interesado y el sistema prepara la documentación editable con los datos de la operación.</p>
+            <span className="eyebrow">{t.document.eyebrow}</span>
+            <h2>{t.document.title}</h2>
+            <p>{t.document.body}</p>
             <ul className="check-list">
-              <li><ShieldCheck size={18} /> Autorizacion de venta o alquiler</li>
-              <li><ShieldCheck size={18} /> Reserva, recibo, boleto o contrato base</li>
-              <li><ShieldCheck size={18} /> Logo y datos institucionales de la inmobiliaria</li>
-              <li><ShieldCheck size={18} /> Historial de cambios y versiones del documento</li>
+              {t.document.checks.map((item) => <li key={item}><ShieldCheck size={18} /> {item}</li>)}
             </ul>
           </div>
         </section>
 
         <section className="section cta-section" id="contacto">
           <div>
-            <span className="eyebrow">Lanzamiento InmoPub</span>
-            <h2>Quiero una demo con mis propiedades y mi marca.</h2>
-            <p>Para venderlo fuerte, la primera demo deberia mostrar propiedades reales de la inmobiliaria, una consulta simulada, una reserva y un documento listo para enviar.</p>
+            <span className="eyebrow">{t.cta.eyebrow}</span>
+            <h2>{t.cta.title}</h2>
+            <p>{t.cta.body}</p>
           </div>
           <LeadForm />
         </section>
