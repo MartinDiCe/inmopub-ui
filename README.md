@@ -2,11 +2,23 @@
 
 Landing comercial de InmoPub by DiceProjects.
 
-## Local
+InmoPub es un producto vertical para inmobiliarias: mini portal de propiedades, captura de consultas, simulador comercial, documentación de operaciones y copiloto web para orientar interesados y vender la demo.
+
+## Stack
+
+- React + Vite
+- TypeScript
+- CSS propio
+- Netlify-ready
+
+## Scripts
 
 ```bash
 npm install
 npm run dev
+npm run lint
+npm run build
+npm run preview
 ```
 
 URL local por defecto:
@@ -15,21 +27,17 @@ URL local por defecto:
 http://localhost:3001
 ```
 
-## Netlify
+## Deploy en Netlify
 
-Build command:
-
-```bash
-npm run build
-```
-
-Publish directory:
+El repo incluye `netlify.toml`.
 
 ```text
-dist
+Build command: npm run build
+Publish directory: dist
+Node version: 22
 ```
 
-## Environment
+## Variables de entorno
 
 Configurar en Netlify:
 
@@ -41,4 +49,20 @@ VITE_PUBLIC_BOT_KEY=inmopub-web
 VITE_PUBLIC_WHATSAPP_URL=https://wa.me/541172466605
 ```
 
-`VITE_MARKETING_CAMPAIGN_KEY` debe existir como campaña activa en Marketing para capturar eventos y formularios.
+Notas:
+
+- `VITE_MARKETING_CAMPAIGN_KEY` debe existir como campaña activa en Marketing para capturar eventos y formularios.
+- `VITE_PROPERTIES_TENANT_ID` define el tenant usado para el catálogo público de propiedades.
+- Si la API pública de propiedades no responde o no tiene datos publicados, la landing usa propiedades demo locales.
+
+## Integraciones
+
+La landing usa:
+
+- Marketing: eventos, scroll depth, clicks, búsquedas, filtros, preguntas del copiloto y formularios.
+- Propiedades: catálogo público y consultas por propiedad.
+- WhatsApp: contacto directo desde CTAs y copiloto.
+
+## Licencia
+
+Este proyecto usa la licencia privada interna de DiceProjects. Ver [LICENSE.md](./LICENSE.md).
