@@ -672,7 +672,7 @@ export default function App() {
               [ClipboardCheck, 'Operaciones', 'Reserva, autorizacion, boleto, contrato, entrega y documentacion asociada.'],
               [FileText, 'Documentos', 'Plantillas comerciales con tu logo y datos de la operación.'],
               [BarChart3, 'Panel comercial', 'Tiempos de respuesta, conversión, visitas, publicaciones y documentos emitidos.'],
-              [Bot, 'Copiloto vendedor', 'Responde dudas, califica interesados, prepara demo y sugiere siguiente accion.'],
+              [Bot, 'Copiloto inmobiliario', 'Opera consultas y documentos con flujos seguros; suma IA para vender, calificar y responder mejor.'],
             ].map(([Icon, title, text]) => (
               <article className="feature-card" key={title as string}>
                 <Icon size={26} />
@@ -680,6 +680,34 @@ export default function App() {
                 <p>{text as string}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="section copilot-product-section" id="copiloto">
+          <div className="section-title left">
+            <span className="eyebrow">Copiloto como servicio</span>
+            <h2>Un asistente inmobiliario que vende, pero no improvisa operaciones.</h2>
+            <p>InmoPub combina flujos determinísticos para ejecutar tareas del negocio con IA opcional para interpretar mensajes, redactar respuestas y preparar la mejor demo comercial.</p>
+          </div>
+          <div className="copilot-product-grid">
+            <article data-track="copilot_without_ai" data-track-category="COPILOT">
+              <ShieldCheck size={24} />
+              <span>Sin IA · Operativo</span>
+              <h3>Hace el trabajo repetible con reglas claras.</h3>
+              <p>Lista propiedades, filtra interesados, agenda visitas, arma reservas desde plantilla, pide datos faltantes y deja todo trazado por tenant, usuario y operación.</p>
+            </article>
+            <article data-track="copilot_with_ai" data-track-category="COPILOT">
+              <Sparkles size={24} />
+              <span>Con IA · Comercial</span>
+              <h3>Ayuda a vender mejor sin guardar nada sin confirmación.</h3>
+              <p>Resume consultas largas, detecta intención, redacta respuestas, sugiere próximos pasos, prepara objeciones y guía al vendedor para cerrar visita, reserva o demo.</p>
+            </article>
+            <article data-track="copilot_sales_demo" data-track-category="COPILOT">
+              <Bot size={24} />
+              <span>Demo y captación</span>
+              <h3>También actúa como asesor de venta de InmoPub.</h3>
+              <p>Explica el ROI, compara contra planillas y portales, califica leads de inmobiliarias y propone el flujo ideal: propiedad publicada, consulta, seguimiento y documento.</p>
+            </article>
           </div>
         </section>
 

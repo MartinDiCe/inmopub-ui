@@ -298,6 +298,7 @@ a {
 
 .insight-strip article,
 .feature-card,
+.copilot-product-grid article,
 .property-card,
 .bi-card,
 .roi-inputs,
@@ -369,6 +370,51 @@ a {
 }
 
 .feature-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.copilot-product-section {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.copilot-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.copilot-product-grid article {
+  padding: 24px;
+}
+
+.copilot-product-grid svg {
+  color: var(--dice-accent);
+}
+
+.copilot-product-grid span {
+  display: block;
+  margin-top: 16px;
+  color: var(--dice-blue);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.copilot-product-grid h3 {
+  margin: 10px 0 10px;
+  color: var(--dice-dark);
+  font-size: 20px;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.copilot-product-grid p {
   margin: 0;
   color: var(--muted);
   line-height: 1.55;
@@ -1300,6 +1346,8 @@ a {
 
   .insight-strip,
   .feature-grid,
+  .copilot-product-section,
+  .copilot-product-grid,
   .property-grid,
   .flow-grid,
   .bi-section,

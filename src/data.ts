@@ -224,6 +224,16 @@ export const funnelSteps = [
 
 export const copilotKnowledge = [
   {
+    intent: ['sin ia', 'deterministico', 'reglas', 'seguro', 'automatizar'],
+    title: 'Copiloto sin IA: operación segura',
+    answer: 'La capa sin IA ejecuta flujos cerrados: buscar propiedades, registrar consultas, pedir datos faltantes, preparar visita, generar reserva desde plantilla y dejar trazabilidad. No inventa datos ni cambia estados fuera de permisos.',
+  },
+  {
+    intent: ['ia', 'inteligencia', 'redactar', 'resumir', 'asesor'],
+    title: 'Copiloto con IA: asesor comercial',
+    answer: 'La IA se usa donde agrega valor: interpretar mensajes ambiguos, resumir necesidades, redactar respuestas, preparar objeciones y recomendar el siguiente paso comercial. Las acciones sensibles quedan pendientes de confirmacion humana.',
+  },
+  {
     intent: ['consulta', 'interesado', 'cliente', 'contacto'],
     title: 'Atencion profesional de consultas',
     answer: 'La mejor respuesta inmobiliaria no es solo mandar fotos: confirmar necesidad, presupuesto, zona, urgencia, forma de contacto y disponibilidad para visita. InmoPub ayuda a que cada consulta quede asociada a una propiedad, con fuente, responsable y siguiente accion.',
