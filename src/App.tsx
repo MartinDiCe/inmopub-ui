@@ -24,7 +24,7 @@ import {
   UserRoundCheck,
   X,
 } from 'lucide-react';
-import { copilotKnowledge, defaultRoiInputs, demoProperties, marketInsights } from './data';
+import { copilotKnowledge, defaultRoiInputs, demoProperties } from './data';
 import { fetchProperties, submitPropertyLead } from './propertiesApi';
 import { calculateRoi, money } from './roi';
 import { appConfig, bindGlobalClickTracking, bindScrollDepthTracking, getCookieConsent, setCookieConsent, submitLead, track } from './marketing';
@@ -51,6 +51,44 @@ function formatPrice(property: Property) {
 
 function localeLabel(...parts: string[]) {
   return parts.filter(Boolean).join(' ');
+}
+
+const demoPropertyI18n: Record<string, Partial<Record<Locale, Partial<Property>>>> = {
+  'demo-palermo-duplex': {
+    en: { title: 'Premium duplex with terrace in Palermo Hollywood', propertyType: 'Apartment', zone: 'Palermo', neighborhood: 'Palermo Hollywood', city: 'Buenos Aires City', amenities: ['Terrace', 'Grill', 'Parking', 'Storage', 'Mortgage ready'], description: 'Unit ready to publish and sell with professional listing, inquiry follow-up, reservation and commercial documentation.', caseStage: 'Reservation under review', documentStage: 'Base purchase agreement generated' },
+    pt: { title: 'Duplex premium com terraço em Palermo Hollywood', propertyType: 'Apartamento', zone: 'Palermo', neighborhood: 'Palermo Hollywood', city: 'Cidade Autônoma de Buenos Aires', amenities: ['Terraço', 'Churrasqueira', 'Garagem', 'Depósito', 'Apto financiamento'], description: 'Unidade pronta para publicar e vender com ficha profissional, acompanhamento de consultas, reserva e documentação comercial.', caseStage: 'Reserva em revisão', documentStage: 'Contrato base gerado' },
+  },
+  'demo-nordelta-casa': {
+    en: { title: 'Lakefront house with pool and master suite', propertyType: 'House', zone: 'Nordelta', neighborhood: 'Los Lagos', amenities: ['Lake view', 'Pool', 'Security', 'Grill', 'Service room'], description: 'High-value property with prospect follow-up, visits and operation documentation.', caseStage: 'Commercial folder opened', documentStage: 'Sale authorization pending' },
+    pt: { title: 'Casa no lago com piscina e suíte master', propertyType: 'Casa', zone: 'Nordelta', neighborhood: 'Los Lagos', amenities: ['Vista para o lago', 'Piscina', 'Segurança', 'Churrasqueira', 'Dependência'], description: 'Imóvel de alto valor com acompanhamento de interessados, visitas e documentação da operação.', caseStage: 'Pasta comercial aberta', documentStage: 'Autorização de venda pendente' },
+  },
+  'demo-belgrano-alquiler': {
+    en: { title: 'Furnished apartment in Belgrano R', propertyType: 'Apartment', zone: 'Belgrano', neighborhood: 'Belgrano R', city: 'Buenos Aires City', amenities: ['Furnished', 'Balcony', 'Parking', 'Pets', 'Laundry'], description: 'Listing ready for rent, inquiry capture, prospect screening and editable base contract.', caseStage: 'Contract in draft', documentStage: 'Rental contract generated' },
+    pt: { title: 'Apartamento mobiliado em Belgrano R', propertyType: 'Apartamento', zone: 'Belgrano', neighborhood: 'Belgrano R', city: 'Cidade Autônoma de Buenos Aires', amenities: ['Mobiliado', 'Sacada', 'Garagem', 'Pets', 'Lavanderia'], description: 'Ficha pronta para aluguel, captura de consultas, pré-seleção e contrato base editável.', caseStage: 'Contrato em rascunho', documentStage: 'Contrato de aluguel gerado' },
+  },
+  'demo-canning-lote': {
+    en: { title: 'Internal lot in private neighborhood in Canning', propertyType: 'Lot', zone: 'Canning', neighborhood: 'Private neighborhood', amenities: ['Security', 'Club house', 'Lagoon', 'Utilities', 'Financing'], caseStage: 'Offer received', documentStage: 'Reservation prepared' },
+    pt: { title: 'Lote interno em condomínio fechado em Canning', propertyType: 'Lote', zone: 'Canning', neighborhood: 'Condomínio fechado', amenities: ['Segurança', 'Club house', 'Lagoa', 'Serviços', 'Financiamento'], caseStage: 'Oferta recebida', documentStage: 'Reserva preparada' },
+  },
+  'demo-san-isidro-oficina': {
+    en: { title: 'Corporate office in San Isidro', propertyType: 'Office', zone: 'Downtown', neighborhood: 'San Isidro', amenities: ['Parking', 'Security', 'Meeting room', 'Central AC', '24h access'], caseStage: 'Active negotiation', documentStage: 'Corporate contract under review' },
+    pt: { title: 'Escritório corporativo em San Isidro', propertyType: 'Escritório', zone: 'Centro', neighborhood: 'San Isidro', amenities: ['Garagem', 'Segurança', 'Sala de reunião', 'Ar central', 'Acesso 24h'], caseStage: 'Negociação ativa', documentStage: 'Contrato corporativo em revisão' },
+  },
+  'demo-mar-del-plata-temporario': {
+    en: { title: 'Short-term rental facing the sea in Playa Grande', propertyType: 'Apartment', zone: 'Playa Grande', neighborhood: 'Playa Grande', amenities: ['Sea view', 'Parking', 'Furnished', 'WiFi', 'Digital check-in'], caseStage: 'Availability confirmed', documentStage: 'Short-term contract ready' },
+    pt: { title: 'Temporada frente ao mar em Playa Grande', propertyType: 'Apartamento', zone: 'Playa Grande', neighborhood: 'Playa Grande', amenities: ['Vista para o mar', 'Garagem', 'Mobiliado', 'WiFi', 'Check-in digital'], caseStage: 'Disponibilidade confirmada', documentStage: 'Contrato de temporada pronto' },
+  },
+};
+
+function localizedProperty(property: Property, locale: Locale): Property {
+  if (locale === 'es') return property;
+  return { ...property, ...(demoPropertyI18n[property.id]?.[locale] ?? {}) };
+}
+
+function specLabels(locale: Locale) {
+  if (locale === 'en') return { rooms: 'rooms', bedrooms: 'beds', bathrooms: 'baths', garages: 'parking' };
+  if (locale === 'pt') return { rooms: 'amb.', bedrooms: 'quartos', bathrooms: 'banhos', garages: 'vagas' };
+  return { rooms: 'amb.', bedrooms: 'dorm.', bathrooms: 'baños', garages: 'coch.' };
 }
 
 function localizedPath(locale: Locale, path: string) {
@@ -87,7 +125,9 @@ function LanguageSelector() {
 }
 
 function PropertyCard({ property, onSelect }: { property: Property; onSelect: (property: Property) => void }) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const view = localizedProperty(property, locale);
+  const specs = specLabels(locale);
   const operationLabels: Record<OperationType, string> = {
     SALE: t.catalog.sale,
     RENT: t.catalog.rent,
@@ -101,34 +141,34 @@ function PropertyCard({ property, onSelect }: { property: Property; onSelect: (p
         onClick={() => onSelect(property)}
         data-track="property_image_open"
         data-track-category="CATALOG"
-        data-track-label={property.title}
+        data-track-label={view.title}
       >
-        <img src={property.imageUrl} alt={property.title} loading="lazy" />
-        <span className="property-badge">{operationLabels[property.operationType]}</span>
-        {property.featured && <span className="property-featured">{t.catalog.featured}</span>}
+        <img src={view.imageUrl} alt={view.title} loading="lazy" />
+        <span className="property-badge">{operationLabels[view.operationType]}</span>
+        {view.featured && <span className="property-featured">{t.catalog.featured}</span>}
       </button>
       <div className="property-body">
         <div>
-          <p className="property-type">{property.propertyType} · {property.zone}</p>
-          <h3>{property.title}</h3>
-          <p className="property-location"><MapPin size={15} /> {property.neighborhood}, {property.city}</p>
+          <p className="property-type">{view.propertyType} · {view.zone}</p>
+          <h3>{view.title}</h3>
+          <p className="property-location"><MapPin size={15} /> {view.neighborhood}, {view.city}</p>
         </div>
         <div className="property-price-row">
-          <strong>{formatPrice(property)}</strong>
-          <span>{property.coveredArea || property.totalArea} m2</span>
+          <strong>{formatPrice(view)}</strong>
+          <span>{view.coveredArea || view.totalArea} m2</span>
         </div>
         <div className="property-specs">
-          <span>{property.rooms || '-'} amb.</span>
-          <span>{property.bedrooms || '-'} dorm.</span>
-          <span>{property.bathrooms || '-'} baños</span>
-          <span>{property.garages || 0} coch.</span>
+          <span>{view.rooms || '-'} {specs.rooms}</span>
+          <span>{view.bedrooms || '-'} {specs.bedrooms}</span>
+          <span>{view.bathrooms || '-'} {specs.bathrooms}</span>
+          <span>{view.garages || 0} {specs.garages}</span>
         </div>
         <div className="property-tags">
-          {property.amenities.slice(0, 4).map((amenity) => <span key={amenity}>{amenity}</span>)}
+          {view.amenities.slice(0, 4).map((amenity) => <span key={amenity}>{amenity}</span>)}
         </div>
         <div className="property-flow">
-          <span><ClipboardCheck size={14} /> {property.caseStage}</span>
-          <span><FileText size={14} /> {property.documentStage}</span>
+          <span><ClipboardCheck size={14} /> {view.caseStage}</span>
+          <span><FileText size={14} /> {view.documentStage}</span>
         </div>
         <button
           type="button"
@@ -136,7 +176,7 @@ function PropertyCard({ property, onSelect }: { property: Property; onSelect: (p
           onClick={() => onSelect(property)}
           data-track="property_open"
           data-track-category="CATALOG"
-          data-track-label={property.title}
+          data-track-label={view.title}
         >
           {t.catalog.openCard} <ChevronRight size={16} />
         </button>
@@ -232,32 +272,33 @@ function LeadForm({ property, onClose }: { property?: Property; onClose?: () => 
 }
 
 function PropertyModal({ property, onClose }: { property: Property | null; onClose: () => void }) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const operationLabels: Record<OperationType, string> = {
     SALE: t.catalog.sale,
     RENT: t.catalog.rent,
     TEMPORARY_RENT: t.catalog.temporary,
   };
   if (!property) return null;
+  const view = localizedProperty(property, locale);
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="property-modal">
         <button className="modal-close" onClick={onClose} aria-label={t.modal.close}><X size={20} /></button>
         <div className="modal-media">
-          <img src={property.imageUrl} alt={property.title} />
+          <img src={view.imageUrl} alt={view.title} />
           <div className="modal-score">
-            <strong>{property.leadScore}</strong>
+            <strong>{view.leadScore}</strong>
             <span>{t.modal.score}</span>
           </div>
         </div>
         <div className="modal-content">
-          <p className="eyebrow">{operationLabels[property.operationType]} · {property.propertyType}</p>
-          <h2>{property.title}</h2>
-          <p className="modal-description">{property.description}</p>
+          <p className="eyebrow">{operationLabels[view.operationType]} · {view.propertyType}</p>
+          <h2>{view.title}</h2>
+          <p className="modal-description">{view.description}</p>
           <div className="modal-metrics">
-            <span><strong>{formatPrice(property)}</strong> {t.modal.price}</span>
-            <span><strong>{property.daysPublished}</strong> {t.modal.days}</span>
-            <span><strong>{property.amenities.length}</strong> {t.modal.attributes}</span>
+            <span><strong>{formatPrice(view)}</strong> {t.modal.price}</span>
+            <span><strong>{view.daysPublished}</strong> {t.modal.days}</span>
+            <span><strong>{view.amenities.length}</strong> {t.modal.attributes}</span>
           </div>
           <div className="case-preview">
             <h3>{t.modal.flowTitle}</h3>
@@ -265,7 +306,7 @@ function PropertyModal({ property, onClose }: { property: Property | null; onClo
               {t.modal.flow.map((item) => <li key={item}>{item}</li>)}
             </ol>
           </div>
-          <LeadForm property={property} onClose={onClose} />
+          <LeadForm property={view} onClose={onClose} />
         </div>
       </div>
     </div>
@@ -670,7 +711,7 @@ export default function App() {
         </section>
 
         <section className="section insight-strip">
-          {marketInsights.map((item) => (
+          {t.insights.map((item) => (
             <article key={item.label}>
               <strong>{item.value}</strong>
               <span>{item.label}</span>
