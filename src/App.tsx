@@ -561,6 +561,16 @@ function legalKeyFromPath(pathname: string): LegalPageKey | null {
   return null;
 }
 
+function normalizedPublicPath(pathname: string) {
+  const parts = pathname.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
+  const localePrefix = parts[0] === 'es' || parts[0] === 'en' || parts[0] === 'pt' ? parts[0] : '';
+  const contentPath = localePrefix ? (parts[1] || '') : (parts[0] || '');
+  const isHome = parts.length === 0 || (localePrefix && parts.length === 1);
+  const isLegal = contentPath === 'legal' || contentPath === 'privacidad' || contentPath === 'cookies' || contentPath === 'terminos' || contentPath === 'aviso-legal';
+  if (isHome || isLegal) return pathname;
+  return localePrefix ? `/${localePrefix}` : '/';
+}
+
 function LegalPage({ pageKey }: { pageKey: LegalPageKey }) {
   const { locale, t } = useLocale();
   const page = t.legalPages[pageKey];
@@ -652,7 +662,8 @@ export default function App() {
   const [search, setSearch] = useState('');
   const [operation, setOperation] = useState('');
   const [selectedDocumentCode, setSelectedDocumentCode] = useState('RESERVA_COMPRA');
-  const legalPageKey = legalKeyFromPath(window.location.pathname);
+  const safePathname = normalizedPublicPath(window.location.pathname);
+  const legalPageKey = legalKeyFromPath(safePathname);
   const selectedDocument = useMemo(
     () => t.document.templates.find((template) => template.code === selectedDocumentCode) ?? t.document.templates[0],
     [selectedDocumentCode, t.document.templates],
@@ -665,6 +676,9 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (safePathname !== window.location.pathname) {
+      window.history.replaceState({}, '', safePathname);
+    }
     if (legalPageKey) return;
     document.title = t.meta.title;
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
@@ -682,7 +696,7 @@ export default function App() {
       unbindClick();
       unbindScroll();
     };
-  }, [legalPageKey, t.meta.description, t.meta.title]);
+  }, [legalPageKey, safePathname, t.meta.description, t.meta.title]);
 
   if (legalPageKey) return <LegalPage pageKey={legalPageKey} />;
 
