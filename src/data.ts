@@ -250,13 +250,13 @@ export const copilotKnowledge = [
   },
   {
     intent: ['precio', 'plan', 'cuanto', 'costo'],
-    title: 'Precio orientado a resultado',
-    answer: 'InmoPub se vende mejor como mini portal inmobiliario + seguimiento comercial + documentos. La demo debe mostrar ahorro de horas, velocidad de respuesta y operaciones cerradas, no solo cantidad de propiedades. Para cotizar, conviene mirar cantidad de propiedades activas, usuarios, sucursales/vendedores y volumen de consultas mensual.',
+    title: 'Suscripcion orientada a resultado',
+    answer: 'InmoPub se vende como suscripcion mensual: mini portal inmobiliario, seguimiento comercial, documentos y copiloto. La entrada recomendada es una prueba fiel de 3 meses con propiedades reales de la inmobiliaria, para medir velocidad de respuesta, consultas recuperadas, visitas, documentos emitidos y operaciones en curso antes de escalar el plan.',
   },
   {
     intent: ['demo', 'mostrar', 'presentacion', 'vender'],
     title: 'Demo recomendada',
-    answer: 'La demo ganadora dura 90 segundos: cargar propiedad, publicar ficha, simular consulta, priorizarla, preparar una reserva y generar documento comercial. Ese flujo demuestra valor operativo y comercial sin explicar menus.',
+    answer: 'La demo ganadora dura 90 segundos: cargar propiedad, publicar ficha, simular consulta, priorizarla, preparar una reserva y generar documento comercial. El cierre comercial natural es ofrecer una prueba de 3 meses con seguimiento de resultados, no una demo aislada.',
   },
   {
     intent: ['roi', 'retorno', 'conversion', 'vende'],

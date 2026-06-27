@@ -11,6 +11,9 @@ type PublicPropertyResponse = {
   propertyTypeCode?: string;
   statusCode?: string;
   currencyCode?: string;
+  currency?: string;
+  currencySymbol?: string;
+  currencyName?: string;
   price?: number | string;
   expenses?: number | string;
   cityName?: string;
@@ -28,6 +31,8 @@ type PublicPropertyResponse = {
   caseId?: string;
   featured?: boolean;
   publishedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 const imageFallbacks = demoProperties.map((item) => item.imageUrl);
@@ -48,9 +53,33 @@ function operation(value?: string): OperationType {
   return 'SALE';
 }
 
+function currencyCode(raw: PublicPropertyResponse, op: OperationType): string {
+  const candidate = text(raw.currencyCode || raw.currency || raw.currencyName || raw.currencySymbol).toUpperCase();
+  const compact = candidate
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '');
+
+  if (compact.includes('USD') || compact.includes('US$') || compact.includes('DOLAR')) return 'USD';
+  if (compact.includes('ARS') || compact === '$' || compact.includes('PESO')) return 'ARS';
+  if (compact.includes('UYU')) return 'UYU';
+  if (compact.includes('BRL') || compact.includes('REAL')) return 'BRL';
+  if (/^[A-Z]{3}$/.test(compact)) return compact;
+  return op === 'SALE' ? 'USD' : 'ARS';
+}
+
+function daysSince(value: string | undefined, fallback: number): number {
+  if (!value) return fallback;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return fallback;
+  const days = Math.floor((Date.now() - parsed.getTime()) / 86_400_000);
+  return Math.max(days, 0);
+}
+
 function mapProperty(raw: PublicPropertyResponse, index: number): Property {
   const op = operation(raw.operationTypeCode);
   const image = raw.images?.[0]?.cardUrl || raw.images?.[0]?.url || raw.images?.[0]?.thumbUrl || imageFallbacks[index % imageFallbacks.length];
+  const publishedDate = raw.publishedAt || raw.updatedAt || raw.createdAt;
   return {
     id: text(raw.id, `api-${index}`),
     slug: text(raw.slug, text(raw.id, `propiedad-${index}`)),
@@ -59,7 +88,7 @@ function mapProperty(raw: PublicPropertyResponse, index: number): Property {
     propertyType: text(raw.propertyTypeCode, 'Propiedad'),
     status: text(raw.statusCode, 'Publicado'),
     price: number(raw.price),
-    currency: text(raw.currencyCode, op === 'SALE' ? 'USD' : 'ARS'),
+    currency: currencyCode(raw, op),
     expenses: number(raw.expenses),
     city: text(raw.cityName, 'Buenos Aires'),
     zone: text(raw.zoneName, 'Zona destacada'),
@@ -78,7 +107,7 @@ function mapProperty(raw: PublicPropertyResponse, index: number): Property {
     caseStage: raw.caseId ? 'Expediente asociado' : 'Listo para abrir caso',
     documentStage: 'Documentacion comercial disponible',
     leadScore: 70 + (index * 7) % 25,
-    daysPublished: 3 + index * 4,
+    daysPublished: daysSince(publishedDate, 3 + index * 4),
   };
 }
 
