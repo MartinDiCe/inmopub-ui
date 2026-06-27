@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   BarChart3,
@@ -428,6 +428,7 @@ function Copilot() {
   const { locale, t } = useLocale();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<CopilotMessage[]>([{
     id: 'welcome',
     sender: 'bot',
@@ -506,6 +507,11 @@ function Copilot() {
     ]);
   }
 
+  useEffect(() => {
+    if (!open) return;
+    messagesEndRef.current?.scrollIntoView({ block: 'end' });
+  }, [messages, open]);
+
   return (
     <div className="copilot">
       {open && (
@@ -529,6 +535,7 @@ function Copilot() {
                 {message.showLeadForm && <LeadForm />}
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           <form className="copilot-input" onSubmit={(event) => { event.preventDefault(); answer(input); }}>
             <input value={input} onChange={(event) => setInput(event.target.value)} placeholder={t.copilot.input} />
