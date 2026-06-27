@@ -124,6 +124,7 @@ export async function fetchProperties(filters: {
   url.searchParams.set('tenantId', appConfig.tenantId);
   url.searchParams.set('page', '0');
   url.searchParams.set('pageSize', '24');
+  url.searchParams.set('unassignedOnly', 'true');
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && `${value}`.trim()) {
       url.searchParams.set(key, `${value}`);
