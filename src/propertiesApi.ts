@@ -138,26 +138,38 @@ function demoOrder(items: Property[]): Property[] {
   });
 }
 
-function localDemoPage(filters: FetchPropertyFilters, page: number, pageSize: number): PropertyPage {
+function filterDemoProperties(filters: FetchPropertyFilters): Property[] {
   const search = filters.search?.trim().toLowerCase() || '';
-  const filtered = demoProperties.filter((property) => {
+  return demoProperties.filter((property) => {
     const matchesSearch = !search || `${property.title} ${property.city} ${property.zone} ${property.neighborhood}`.toLowerCase().includes(search);
     const matchesOperation = !filters.operationType || property.operationType === filters.operationType;
     const matchesType = !filters.propertyType || property.propertyType.toLowerCase().includes(String(filters.propertyType).toLowerCase());
     const matchesFeatured = !filters.featuredOnly || Boolean(property.featured);
     return matchesSearch && matchesOperation && matchesType && matchesFeatured;
   });
-  const ordered = demoOrder(filtered);
+}
+
+function pageFromItems(items: Property[], page: number, pageSize: number): PropertyPage {
+  const ordered = demoOrder(items);
   const start = page * pageSize;
-  const items = ordered.slice(start, start + pageSize);
   return {
-    items,
+    items: ordered.slice(start, start + pageSize),
     page,
     pageSize,
     totalElements: ordered.length,
     totalPages: Math.max(1, Math.ceil(ordered.length / pageSize)),
     hasMore: start + pageSize < ordered.length,
   };
+}
+
+function localDemoPage(filters: FetchPropertyFilters, page: number, pageSize: number): PropertyPage {
+  return pageFromItems(filterDemoProperties(filters), page, pageSize);
+}
+
+function mergedDemoPage(apiItems: Property[], filters: FetchPropertyFilters, page: number, pageSize: number): PropertyPage {
+  const seen = new Set(apiItems.map((item) => item.id));
+  const demoItems = filterDemoProperties(filters).filter((item) => !seen.has(item.id));
+  return pageFromItems([...apiItems, ...demoItems], page, pageSize);
 }
 
 type FetchPropertyFilters = {
@@ -189,9 +201,23 @@ export async function fetchProperties(filters: FetchPropertyFilters = {}, page =
     const json = await response.json();
     const content = Array.isArray(json) ? json : Array.isArray(json?.content) ? json.content : [];
     const mapped = demoOrder(content.map(mapProperty));
-    if (!mapped.length) return localDemoPage(filters, page, pageSize);
+    if (!mapped.length) {
+      if (page > 0) {
+        const firstPageUrl = new URL(url);
+        firstPageUrl.searchParams.set('page', '0');
+        const firstPageResponse = await fetch(firstPageUrl, { headers: { Accept: 'application/json' } });
+        if (firstPageResponse.ok) {
+          const firstPageJson = await firstPageResponse.json();
+          const firstPageContent = Array.isArray(firstPageJson) ? firstPageJson : Array.isArray(firstPageJson?.content) ? firstPageJson.content : [];
+          const firstPageMapped = demoOrder(firstPageContent.map(mapProperty));
+          if (firstPageMapped.length) return mergedDemoPage(firstPageMapped, filters, page, pageSize);
+        }
+      }
+      return localDemoPage(filters, page, pageSize);
+    }
     const totalElements = Number(json?.totalElements ?? mapped.length);
     const totalPages = Number(json?.totalPages ?? (Math.ceil(totalElements / pageSize) || 1));
+    if (totalPages <= 1 || totalElements <= pageSize) return mergedDemoPage(mapped, filters, page, pageSize);
     return {
       items: mapped,
       page: Number(json?.page ?? page),
