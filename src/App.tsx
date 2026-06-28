@@ -667,6 +667,7 @@ export default function App() {
   const [properties, setProperties] = useState<Property[]>(demoProperties);
   const [catalogPage, setCatalogPage] = useState(0);
   const [catalogTotal, setCatalogTotal] = useState(demoProperties.length);
+  const [catalogPageSize, setCatalogPageSize] = useState(6);
   const [hasMoreProperties, setHasMoreProperties] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Property | null>(null);
@@ -719,6 +720,7 @@ export default function App() {
       setProperties((current) => append ? [...current, ...next.items] : next.items);
       setCatalogPage(next.page);
       setCatalogTotal(next.totalElements);
+      setCatalogPageSize(next.pageSize);
       setHasMoreProperties(next.hasMore);
       track('SEARCH', {
         actionCode: 'properties_search',
@@ -738,6 +740,10 @@ export default function App() {
 
   function handleLoadMore() {
     void loadProperties({ search, operationType: operation }, catalogPage + 1, true);
+  }
+
+  function handleCatalogPage(nextPage: number) {
+    void loadProperties({ search, operationType: operation }, Math.max(0, nextPage), false);
   }
 
   function handleSelect(property: Property) {
@@ -893,8 +899,14 @@ export default function App() {
               {properties.map((property) => <PropertyCard key={property.id} property={property} onSelect={handleSelect} />)}
             </div>
           )}
-          <div className="catalog-more">
-            <span>{properties.length} / {catalogTotal}</span>
+          <div className="catalog-more" aria-label="Paginador de propiedades">
+            <button type="button" className="pager-button" onClick={() => handleCatalogPage(catalogPage - 1)} disabled={loading || catalogPage <= 0} aria-label="Página anterior">
+              ‹
+            </button>
+            <span>{catalogPage + 1} / {Math.max(1, Math.ceil(catalogTotal / Math.max(1, catalogPageSize)))}</span>
+            <button type="button" className="pager-button" onClick={() => handleCatalogPage(catalogPage + 1)} disabled={loading || !hasMoreProperties} aria-label="Página siguiente">
+              ›
+            </button>
             {hasMoreProperties && (
               <button type="button" onClick={handleLoadMore} disabled={loading}>
                 {loading ? t.catalog.loading : 'Ver mas propiedades'}

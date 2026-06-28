@@ -544,8 +544,20 @@ a {
   font-weight: 900;
 }
 
+.catalog-more .pager-button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(28, 42, 56, .12);
+  background: #fff;
+  color: var(--dice-blue);
+  box-shadow: 0 10px 24px rgba(28, 42, 56, .08);
+  font-size: 26px;
+  line-height: 1;
+}
+
 .catalog-more button:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: .7;
 }
 
