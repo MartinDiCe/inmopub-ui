@@ -80,7 +80,7 @@ export const messages: Record<Locale, Messages> = {
       title: 'Un asistente inmobiliario que vende, pero no improvisa operaciones.',
       body: 'InmoPub combina flujos determinísticos para ejecutar tareas del negocio con IA opcional para interpretar mensajes, redactar respuestas y preparar la mejor demo comercial.',
       cards: [
-        { tag: 'Sin IA · Operativo', title: 'Hace el trabajo repetible con reglas claras.', text: 'Lista propiedades, filtra interesados, agenda visitas, arma reservas desde plantilla, pide datos faltantes y deja todo trazado por tenant, usuario y operación.' },
+        { tag: 'Sin IA · Operativo', title: 'Hace el trabajo repetible con reglas claras.', text: 'Lista propiedades, filtra interesados, agenda visitas, arma reservas desde plantilla, pide datos faltantes y deja todo trazado por inmobiliaria, usuario y operación.' },
         { tag: 'Con IA · Comercial', title: 'Ayuda a vender mejor sin guardar nada sin confirmación.', text: 'Resume consultas largas, detecta intención, redacta respuestas, sugiere próximos pasos, prepara objeciones y guía al vendedor para cerrar visita, reserva o demo.' },
         { tag: 'Demo y captación', title: 'También actúa como asesor de venta de InmoPub.', text: 'Explica el ROI, compara contra planillas y portales, califica leads de inmobiliarias y propone el flujo ideal: propiedad publicada, consulta, seguimiento y documento.' },
       ],
@@ -96,13 +96,13 @@ export const messages: Record<Locale, Messages> = {
     roi: { eyebrow: 'Simulador comercial', title: 'Mostrá cuánto puede ganar una inmobiliaria ordenando su operación.', body: 'Ajustá los supuestos de una inmobiliaria real y estimá el impacto de responder mejor, no perder consultas y generar documentos sin doble carga.', note: 'Los controles ayudan a definir una prueba de 3 meses con métricas concretas antes de activar o ampliar la suscripción.', impact: 'impacto mensual estimado entre consultas mejor atendidas, cierres adicionales y tiempo operativo recuperado.', inputs: { properties: 'Cartera publicada', monthlyLeads: 'Consultas por mes', conversionRate: 'Consultas que cierran (%)', averageCommission: 'Ingreso promedio por cierre', adminHoursPerWeek: 'Horas semanales de carga manual', hourlyCost: 'Costo estimado por hora' }, cards: { recovered: 'consultas recuperadas', deals: 'cierres estimados', revenue: 'ingreso potencial', savings: 'tiempo recuperado' } },
     document: {
       eyebrow: 'Documentos comerciales',
-      title: 'Mostrá documentos reales, con logo, datos del tenant y vista A4.',
-      body: 'Elegí el documento inmobiliario y la demo previsualiza cómo saldría para una operación. La misma lógica puede consumirse por API: tenant, tipo documental y datos de ejemplo.',
+      title: 'Mostrá documentos reales, con logo, datos de la inmobiliaria y vista A4.',
+      body: 'Elegí el documento inmobiliario y la demo previsualiza cómo saldría para una operación. La misma lógica puede consumirse por API con marca, tipo documental y datos de ejemplo.',
       company: 'INMOBILIARIA DEMO',
       meta: 'CUIT · Matrícula · Domicilio · Email',
       selectorLabel: 'Documento inmobiliario',
       previewLabel: 'Vista previa profesional',
-      apiPill: 'API de preview por tenant y tipo documental',
+      apiPill: 'API de preview por marca y tipo documental',
       checks: ['Autorización de venta o alquiler', 'Reserva, recibo, boleto o contrato base', 'Logo y datos institucionales de la inmobiliaria', 'Historial de cambios y versiones del documento'],
       templates: [
         { code: 'RESERVA_COMPRA', label: 'Reserva de compra', tag: 'Venta', title: 'RESERVA DE COMPRA', paragraphs: ['En la ciudad de Buenos Aires, el interesado {{cliente}} formula reserva por la propiedad ubicada en {{domicilio}}, por el precio de {{precio}}.', 'La operación queda vinculada a una carpeta comercial con documentación adjunta, estado de avance y registro de aprobaciones.'], signatures: ['Comprador', 'Vendedor', 'Inmobiliaria'] },
@@ -159,7 +159,7 @@ messages.en = {
     title: 'A real estate assistant that sells, without improvising operations.',
     body: 'InmoPub combines deterministic flows for business tasks with optional AI to interpret messages, draft replies and prepare a better sales demo.',
     cards: [
-      { tag: 'No AI · Operational', title: 'Runs repeatable work with clear rules.', text: 'Lists properties, filters leads, schedules visits, creates reservations from templates, asks for missing data and keeps tenant, user and operation traceability.' },
+      { tag: 'No AI · Operational', title: 'Runs repeatable work with clear rules.', text: 'Lists properties, filters leads, schedules visits, creates reservations from templates, asks for missing data and keeps agency, user and operation traceability.' },
       { tag: 'With AI · Commercial', title: 'Helps sell better without saving anything without confirmation.', text: 'Summarizes long inquiries, detects intent, drafts answers, suggests next steps, prepares objections and guides the seller toward visit, reservation or demo.' },
       { tag: 'Demo and capture', title: 'Also acts as an InmoPub sales advisor.', text: 'Explains ROI, compares against spreadsheets and portals, qualifies agency leads and proposes the ideal flow: published property, inquiry, follow-up and document.' },
     ],
@@ -176,13 +176,13 @@ messages.en = {
   roi: { eyebrow: 'Commercial simulator', title: 'Show how much an agency can gain by organizing its operation.', body: 'Adjust assumptions from a real agency and estimate the impact of responding better, not losing inquiries and generating documents without duplicate work.', note: 'Controls help define a 3-month proof with concrete metrics before activating or expanding the subscription.', impact: 'estimated monthly impact from better handled inquiries, extra closings and recovered operational time.', inputs: { properties: 'Published portfolio', monthlyLeads: 'Monthly inquiries', conversionRate: 'Inquiries that close (%)', averageCommission: 'Average revenue per closing', adminHoursPerWeek: 'Weekly manual work hours', hourlyCost: 'Estimated hourly cost' }, cards: { recovered: 'recovered inquiries', deals: 'estimated closings', revenue: 'potential revenue', savings: 'recovered time' } },
   document: {
     eyebrow: 'Commercial documents',
-    title: 'Show real documents with logo, tenant data and A4 preview.',
-    body: 'Choose a real estate document and the demo previews how it would look for an operation. The same logic can be consumed by API: tenant, document type and sample data.',
+    title: 'Show real documents with logo, agency data and A4 preview.',
+    body: 'Choose a real estate document and the demo previews how it would look for an operation. The same logic can be consumed by API with brand, document type and sample data.',
     company: 'DEMO AGENCY',
     meta: 'Tax ID · License · Address · Email',
     selectorLabel: 'Real estate document',
     previewLabel: 'Professional preview',
-    apiPill: 'Preview API by tenant and document type',
+    apiPill: 'Preview API by brand and document type',
     checks: ['Sale or rental authorization', 'Reservation, receipt, purchase agreement or base contract', 'Agency logo and institutional data', 'Document change history and versions'],
     templates: [
       { code: 'RESERVA_COMPRA', label: 'Purchase reservation', tag: 'Sale', title: 'PURCHASE RESERVATION', paragraphs: ['In Buenos Aires, the prospect {{cliente}} places a reservation for the property located at {{domicilio}}, for the price of {{precio}}.', 'The operation is linked to a commercial folder with attached documentation, progress status and approval record.'], signatures: ['Buyer', 'Seller', 'Agency'] },
@@ -235,7 +235,7 @@ messages.pt = {
     title: 'Um assistente imobiliário que vende, mas não improvisa operações.',
     body: 'InmoPub combina fluxos determinísticos para executar tarefas do negócio com IA opcional para interpretar mensagens, redigir respostas e preparar uma demo comercial melhor.',
     cards: [
-      { tag: 'Sem IA · Operacional', title: 'Executa o trabalho repetível com regras claras.', text: 'Lista imóveis, filtra interessados, agenda visitas, monta reservas a partir de modelo, pede dados faltantes e mantém rastreabilidade por tenant, usuário e operação.' },
+      { tag: 'Sem IA · Operacional', title: 'Executa o trabalho repetível com regras claras.', text: 'Lista imóveis, filtra interessados, agenda visitas, monta reservas a partir de modelo, pede dados faltantes e mantém rastreabilidade por imobiliária, usuário e operação.' },
       { tag: 'Com IA · Comercial', title: 'Ajuda a vender melhor sem salvar nada sem confirmação.', text: 'Resume consultas longas, detecta intenção, redige respostas, sugere próximos passos, prepara objeções e guia o vendedor para visita, reserva ou demo.' },
       { tag: 'Demo e captação', title: 'Também atua como assessor de venda do InmoPub.', text: 'Explica ROI, compara com planilhas e portais, qualifica leads de imobiliárias e propõe o fluxo ideal: imóvel publicado, consulta, acompanhamento e documento.' },
     ],
@@ -252,13 +252,13 @@ messages.pt = {
   roi: { eyebrow: 'Simulador comercial', title: 'Mostre quanto uma imobiliária pode ganhar organizando sua operação.', body: 'Ajuste premissas de uma imobiliária real e estime o impacto de responder melhor, não perder consultas e gerar documentos sem dupla carga.', note: 'Os controles ajudam a definir uma prova de 3 meses com métricas concretas antes de ativar ou ampliar a assinatura.', impact: 'impacto mensal estimado entre consultas melhor atendidas, fechamentos adicionais e tempo operacional recuperado.', inputs: { properties: 'Carteira publicada', monthlyLeads: 'Consultas por mês', conversionRate: 'Consultas que fecham (%)', averageCommission: 'Receita média por fechamento', adminHoursPerWeek: 'Horas semanais de trabalho manual', hourlyCost: 'Custo estimado por hora' }, cards: { recovered: 'consultas recuperadas', deals: 'fechamentos estimados', revenue: 'receita potencial', savings: 'tempo recuperado' } },
   document: {
     eyebrow: 'Documentos comerciais',
-    title: 'Mostre documentos reais, com logo, dados do tenant e prévia A4.',
-    body: 'Escolha o documento imobiliário e a demo mostra como sairia para uma operação. A mesma lógica pode ser consumida por API: tenant, tipo documental e dados de exemplo.',
+    title: 'Mostre documentos reais, com logo, dados da imobiliária e prévia A4.',
+    body: 'Escolha o documento imobiliário e a demo mostra como sairia para uma operação. A mesma lógica pode ser consumida por API com marca, tipo documental e dados de exemplo.',
     company: 'IMOBILIÁRIA DEMO',
     meta: 'CNPJ · Registro · Endereço · Email',
     selectorLabel: 'Documento imobiliário',
     previewLabel: 'Prévia profissional',
-    apiPill: 'API de prévia por tenant e tipo documental',
+    apiPill: 'API de prévia por marca e tipo documental',
     checks: ['Autorização de venda ou aluguel', 'Reserva, recibo, proposta ou contrato base', 'Logo e dados institucionais da imobiliária', 'Histórico de alterações e versões do documento'],
     templates: [
       { code: 'RESERVA_COMPRA', label: 'Reserva de compra', tag: 'Venda', title: 'RESERVA DE COMPRA', paragraphs: ['Na cidade de Buenos Aires, o interessado {{cliente}} formaliza reserva pelo imóvel localizado em {{domicilio}}, pelo preço de {{precio}}.', 'A operação fica vinculada a uma pasta comercial, com documentação anexada, estado de avanço e registro de aprovações.'], signatures: ['Comprador', 'Vendedor', 'Imobiliária'] },

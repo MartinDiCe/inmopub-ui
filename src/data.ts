@@ -266,7 +266,7 @@ export const copilotKnowledge = [
   {
     intent: ['documento', 'contrato', 'reserva', 'boleto', 'operacion'],
     title: 'Propiedades + documentos',
-    answer: 'Documentos que venden confianza: reserva, autorización de venta/alquiler, boleto, contrato base, recibo de seña y entrega de llaves.\n\nEl copiloto puede pedir datos faltantes, previsualizar el documento con logo del tenant y dejarlo listo para revisión.\n\nRegla profesional: nunca emite final ni envía documentación sensible sin confirmación.',
+    answer: 'Documentos que venden confianza: reserva, autorización de venta/alquiler, boleto, contrato base, recibo de seña y entrega de llaves.\n\nEl copiloto puede pedir datos faltantes, previsualizar el documento con logo y datos de la inmobiliaria, y dejarlo listo para revisión.\n\nRegla profesional: nunca emite final ni envía documentación sensible sin confirmación.',
   },
   {
     intent: ['alquiler', 'venta', 'temporario', 'reservar'],

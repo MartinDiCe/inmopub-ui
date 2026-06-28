@@ -63,6 +63,34 @@ function operation(value?: string): OperationType {
   return 'SALE';
 }
 
+function propertyTypeLabel(value?: string): string {
+  const normalized = text(value).toUpperCase();
+  if (normalized.includes('HOUSE') || normalized.includes('CASA')) return 'Casa';
+  if (normalized.includes('LOT') || normalized.includes('LAND') || normalized.includes('LOTE')) return 'Lote';
+  if (normalized.includes('OFFICE') || normalized.includes('OFICINA')) return 'Oficina';
+  if (normalized.includes('COMMERCIAL') || normalized.includes('LOCAL')) return 'Local';
+  if (normalized.includes('APARTMENT') || normalized.includes('DEPTO') || normalized.includes('DEPART')) return 'Departamento';
+  return text(value, 'Propiedad');
+}
+
+function amenityLabel(value: string): string {
+  const normalized = value.toUpperCase();
+  const labels: Record<string, string> = {
+    BALCONY: 'Balcon',
+    CREDIT: 'Apto credito',
+    FURNISHED: 'Amoblado',
+    GARAGE: 'Cochera',
+    GARDEN: 'Jardin',
+    GRILL: 'Parrilla',
+    LAUNDRY: 'Lavadero',
+    PETS: 'Acepta mascotas',
+    POOL: 'Pileta',
+    SECURITY: 'Seguridad',
+    TERRACE: 'Terraza',
+  };
+  return labels[normalized] || value.replaceAll('_', ' ').toLowerCase().replace(/^\w/, (letter) => letter.toUpperCase());
+}
+
 function currencyCode(raw: PublicPropertyResponse, op: OperationType): string {
   const candidate = text(raw.currencyCode || raw.currency || raw.currencyName || raw.currencySymbol).toUpperCase();
   const compact = candidate
@@ -95,7 +123,7 @@ function mapProperty(raw: PublicPropertyResponse, index: number): Property {
     slug: text(raw.slug, text(raw.id, `propiedad-${index}`)),
     title: text(raw.title, 'Propiedad publicada'),
     operationType: op,
-    propertyType: text(raw.propertyTypeCode, 'Propiedad'),
+    propertyType: propertyTypeLabel(raw.propertyTypeCode),
     status: text(raw.statusCode, 'Publicado'),
     price: number(raw.price),
     currency: currencyCode(raw, op),
@@ -110,7 +138,7 @@ function mapProperty(raw: PublicPropertyResponse, index: number): Property {
     garages: raw.garages || 0,
     coveredArea: number(raw.coveredArea),
     totalArea: number(raw.totalArea),
-    amenities: raw.amenities?.length ? raw.amenities : ['Ficha publica', 'Lead tracking', 'Documentos'],
+    amenities: raw.amenities?.length ? raw.amenities.map(amenityLabel) : ['Ficha publica', 'Seguimiento comercial', 'Documentos'],
     description: text(raw.description, 'Ficha inmobiliaria publicada desde InmoPub.'),
     imageUrl: image,
     featured: raw.featured,
