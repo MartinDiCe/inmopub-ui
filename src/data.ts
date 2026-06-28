@@ -226,61 +226,71 @@ export const copilotKnowledge = [
   {
     intent: ['sin ia', 'deterministico', 'reglas', 'seguro', 'automatizar'],
     title: 'Copiloto sin IA: operación segura',
-    answer: 'La capa sin IA ejecuta flujos cerrados: buscar propiedades, registrar consultas, pedir datos faltantes, preparar visita, generar reserva desde plantilla y dejar trazabilidad. No inventa datos ni cambia estados fuera de permisos.',
+    answer: 'Diagnóstico: la inmobiliaria no necesita “chat lindo”, necesita que el sistema opere sin perder control.\n\nQué hace sin IA: busca propiedades, registra consultas, pide datos faltantes, agenda visita, prepara reserva desde plantilla y deja trazabilidad.\n\nRegla comercial: no inventa datos, no cambia estados sensibles y no emite documentos finales sin confirmación.',
   },
   {
     intent: ['ia', 'inteligencia', 'redactar', 'resumir', 'asesor'],
     title: 'Copiloto con IA: asesor comercial',
-    answer: 'La IA se usa donde agrega valor: interpretar mensajes ambiguos, resumir necesidades, redactar respuestas, preparar objeciones y recomendar el siguiente paso comercial. Las acciones sensibles quedan pendientes de confirmacion humana.',
+    answer: 'La IA entra donde hay ambigüedad: interpreta pedidos, resume necesidades, redacta respuestas, arma objeciones y recomienda el siguiente paso.\n\nNo es dueño del flujo: si hay que reservar, cambiar estado, emitir contrato o enviar documentación, deja una propuesta para revisión humana.\n\nAsí se vende: IA para acelerar criterio comercial, no para reemplazar responsabilidad profesional.',
   },
   {
     intent: ['consulta', 'interesado', 'cliente', 'contacto'],
     title: 'Atencion profesional de consultas',
-    answer: 'La mejor respuesta inmobiliaria no es solo mandar fotos: confirmar necesidad, presupuesto, zona, urgencia, forma de contacto y disponibilidad para visita. InmoPub ayuda a que cada consulta quede asociada a una propiedad, con fuente, responsable y siguiente accion.',
+    answer: 'Un lead inmobiliario se enfría rápido. La respuesta profesional no es “te paso fotos”: es confirmar necesidad, presupuesto, zona, urgencia, forma de contacto y disponibilidad para visita.\n\nInmoPub asocia cada consulta a propiedad, fuente, responsable y próxima acción.\n\nSiguiente paso recomendado: proponer dos horarios concretos y dejar la consulta en estado “visita propuesta” o “calificación pendiente”.',
   },
   {
     intent: ['visita', 'mostrar', 'recorrido', 'agenda'],
     title: 'De consulta a visita',
-    answer: 'Para aumentar cierres, el objetivo es convertir consultas calificadas en visitas concretas. Conviene responder rapido, proponer dos horarios, confirmar datos del interesado y dejar registro de visita, estado y comentarios para seguimiento.',
+    answer: 'Objetivo: convertir una consulta calificada en visita real.\n\nFlujo recomendado: responder rápido, validar presupuesto, ofrecer dos horarios, confirmar WhatsApp/email y registrar comentarios.\n\nCómo lo vendés: la inmobiliaria deja de depender de memoria y chats sueltos; cada interesado queda con estado, origen, propiedad y responsable.',
   },
   {
     intent: ['tasacion', 'precio', 'valor', 'publicar'],
     title: 'Publicacion y precio',
-    answer: 'Una ficha vendible debe mostrar ubicacion, precio, ambientes, superficies, amenities, expensas, fotos claras y beneficios de zona. Si el precio esta en revision, se puede publicar con estrategia consultiva y medir consultas para ajustar la propuesta comercial.',
+    answer: 'Una ficha vendible tiene que responder antes de que el usuario pregunte: ubicación, precio, ambientes, superficies, amenities, expensas, fotos claras y beneficios de zona.\n\nSi el precio está en revisión, conviene publicar con estrategia consultiva y medir interés real: búsquedas, aperturas, consultas y visitas.\n\nDato clave para la demo: no mostramos sólo catálogo; mostramos señales comerciales para decidir.',
   },
   {
     intent: ['precio', 'plan', 'cuanto', 'costo'],
     title: 'Suscripcion orientada a resultado',
-    answer: 'InmoPub se vende como suscripcion mensual: mini portal inmobiliario, seguimiento comercial, documentos y copiloto. La entrada recomendada es una prueba fiel de 3 meses con propiedades reales de la inmobiliaria, para medir velocidad de respuesta, consultas recuperadas, visitas, documentos emitidos y operaciones en curso antes de escalar el plan.',
+    answer: 'No lo vendería como “software barato”. Lo vendería como suscripción para ordenar captación, publicación, seguimiento y documentación.\n\nEntrada recomendada: prueba fiel de 3 meses con propiedades reales.\n\nMétricas de decisión: consultas recuperadas, velocidad de respuesta, visitas coordinadas, documentos emitidos y operaciones abiertas. Si mejora, el plan se escala con evidencia.',
   },
   {
     intent: ['demo', 'mostrar', 'presentacion', 'vender'],
     title: 'Demo recomendada',
-    answer: 'La demo ganadora dura 90 segundos: cargar propiedad, publicar ficha, simular consulta, priorizarla, preparar una reserva y generar documento comercial. El cierre comercial natural es ofrecer una prueba de 3 meses con seguimiento de resultados, no una demo aislada.',
+    answer: 'Demo ganadora en 90 segundos:\n1. Cargar una propiedad con fotos y amenities.\n2. Publicar ficha con logo de la inmobiliaria.\n3. Simular consulta.\n4. Calificar interesado y proponer visita.\n5. Generar reserva o autorización.\n\nCierre: “Probemos 3 meses con tus propiedades, medimos consultas, visitas y documentos, y si resuelve el problema activamos la suscripción”.',
   },
   {
     intent: ['roi', 'retorno', 'conversion', 'vende'],
     title: 'Retorno comercial',
-    answer: 'El retorno aparece cuando se responde rapido, no se pierden consultas y se elimina doble carga. Si una inmobiliaria recupera apenas 2 operaciones por mes o evita 20 horas operativas, el software se paga solo. El punto fuerte es medir consultas, tiempos de respuesta, visitas y documentos emitidos.',
+    answer: 'El ROI no está en “tener web”. Está en responder antes, no perder consultas y reducir doble carga.\n\nMedición mínima: consultas, tiempo de respuesta, visitas, documentos emitidos, reservas y operaciones abiertas.\n\nArgumento de venta: si recupera una operación, evita horas administrativas o mejora conversión de leads actuales, la suscripción se defiende sola.',
   },
   {
     intent: ['documento', 'contrato', 'reserva', 'boleto', 'operacion'],
     title: 'Propiedades + documentos',
-    answer: 'Cada operacion puede preparar reserva, autorizacion de venta/alquiler, boleto, contrato, entrega de llaves o documentacion de escribania. El copiloto no guarda sin confirmacion: previsualiza datos, pide faltantes y genera el documento para revisar.',
+    answer: 'Documentos que venden confianza: reserva, autorización de venta/alquiler, boleto, contrato base, recibo de seña y entrega de llaves.\n\nEl copiloto puede pedir datos faltantes, previsualizar el documento con logo del tenant y dejarlo listo para revisión.\n\nRegla profesional: nunca emite final ni envía documentación sensible sin confirmación.',
   },
   {
     intent: ['alquiler', 'venta', 'temporario', 'reservar'],
     title: 'Venta, alquiler o temporario',
-    answer: 'InmoPub sirve para venta, alquiler y temporario: la diferencia esta en estados, datos pedidos y documentos. Venta prioriza reserva/autorizacion/boleto; alquiler prioriza perfil del interesado, garantia, contrato y entrega; temporario prioriza disponibilidad, senia y reglas de estadia.',
+    answer: 'El producto se adapta por operación:\n\nVenta: reserva, autorización, boleto y negociación.\nAlquiler: perfil del interesado, garantía, contrato y entrega.\nTemporario: disponibilidad, seña, reglas de estadía y check-in.\n\nLa demo debe mostrar que no es un catálogo genérico: cada operación tiene estados, datos y documentos propios.',
   },
   {
     intent: ['objecion', 'objeciones', 'competencia', 'portal', 'zonaprop', 'argenprop', 'mercadolibre'],
     title: 'Como manejar la objecion de portales',
-    answer: 'InmoPub no compite por trafico masivo contra portales. Se posiciona como mini portal propio + seguimiento + documentos: ordena consultas que llegan por web, WhatsApp, redes o portales y evita que la operacion quede perdida en chats y planillas.',
+    answer: 'Objeción: “Ya publico en portales”.\n\nRespuesta: perfecto, seguí usándolos. InmoPub no compite por tráfico masivo; ordena lo que pasa después: consulta, seguimiento, visita, reserva y documentación.\n\nPitch: “No reemplazamos portales; evitamos que tus consultas queden perdidas en WhatsApp, planillas y memoria del vendedor”.',
+  },
+  {
+    intent: ['cerrar', 'cierre', 'comprar', 'contratar', 'prueba', '3 meses'],
+    title: 'Cierre comercial',
+    answer: 'Cierre profesional:\n\n“Tomemos 10 a 30 propiedades reales. Activamos ficha pública, capturamos consultas, usamos estados comerciales y generamos documentos. En 3 meses medimos si mejora respuesta, orden y oportunidades. Si funciona, lo convertimos en suscripción”.\n\nEso baja fricción y evita vender promesas abstractas.',
   },
   {
     intent: ['marketing', 'campana', 'medir', 'ads'],
     title: 'Marketing medible',
-    answer: 'La landing mide vistas, filtros, propiedades vistas, simulaciones de retorno, clicks de WhatsApp, consultas y preguntas del copiloto. Eso permite optimizar anuncios por intencion real: venta, alquiler, tasacion, documentacion o demo.',
+    answer: 'La campaña debe medir intención real, no sólo visitas.\n\nEventos útiles: vistas, filtros, propiedades abiertas, simulador ROI, clicks de WhatsApp, consultas y preguntas al copiloto.\n\nEstrategia: segmentar anuncios por dolor. “Pierdo consultas”, “no tengo web propia”, “tardo en responder”, “documentos desordenados” o “quiero captar propietarios”.',
+  },
+  {
+    intent: ['captar', 'propietario', 'captacion', 'tasar'],
+    title: 'Captacion de propietarios',
+    answer: 'Para captar propietarios, la promesa no es “publico tu inmueble”. Es “te doy una ficha profesional, seguimiento medible, interesados ordenados y documentación lista para avanzar”.\n\nLa landing puede usar un CTA específico: “Quiero evaluar mi propiedad” y el backoffice lo convierte en oportunidad comercial.',
   },
 ];
