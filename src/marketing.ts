@@ -78,13 +78,16 @@ export function track(eventType: MarketingEventType, input: {
 }) {
   if (!appConfig.marketingCampaignKey) return;
   if (!hasMarketingConsent()) return;
+  const backendEventType = normalizeMarketingEventType(eventType);
   void fetch(apiUrl(`/v1/campaigns/capture/${encodeURIComponent(appConfig.marketingCampaignKey)}/events`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     keepalive: true,
     body: JSON.stringify({
-      eventType,
+      eventType: backendEventType,
       visitorId: visitorId(),
+      entityType: input.propertyId ? 'PROPERTY' : undefined,
+      entityId: input.propertyId,
       actionCode: input.actionCode,
       actionLabel: input.actionLabel,
       category: input.category || 'INMOPUB',
@@ -96,6 +99,27 @@ export function track(eventType: MarketingEventType, input: {
       metadata: metadata(input.metadata),
     }),
   }).catch(() => undefined);
+}
+
+function normalizeMarketingEventType(eventType: MarketingEventType): string {
+  switch (eventType) {
+    case 'VIEW':
+    case 'CLICK':
+    case 'PROPERTY_VIEW':
+    case 'LEAD':
+    case 'BOT_QUESTION':
+      return eventType;
+    case 'SEARCH':
+    case 'FILTER':
+    case 'ROI_CALC':
+    case 'BOT_OPEN':
+    case 'DEMO_STEP':
+      return 'CLICK';
+    case 'SCROLL_DEPTH':
+      return 'VIEW';
+    default:
+      return 'CLICK';
+  }
 }
 
 export function bindGlobalClickTracking() {
