@@ -524,6 +524,31 @@ a {
   gap: 18px;
 }
 
+.catalog-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+  color: var(--dice-muted);
+  font-weight: 900;
+}
+
+.catalog-more button {
+  border: 0;
+  border-radius: 8px;
+  background: var(--dice-blue);
+  color: white;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.catalog-more button:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
 .property-card {
   overflow: hidden;
 }

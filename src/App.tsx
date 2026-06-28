@@ -34,6 +34,7 @@ import type { CopilotMessage, OperationType, Property, RoiInputs } from './types
 import type { LucideIcon } from 'lucide-react';
 
 const quickFilters = [
+  { labelKey: 'featured', featuredOnly: true },
   { labelKey: 'saleCaba', operationType: 'SALE', city: 'Ciudad Autonoma de Buenos Aires' },
   { labelKey: 'rent', operationType: 'RENT' },
   { labelKey: 'premiumHomes', propertyType: 'Casa' },
@@ -664,6 +665,9 @@ function FooterContent() {
 export default function App() {
   const { t } = useLocale();
   const [properties, setProperties] = useState<Property[]>(demoProperties);
+  const [catalogPage, setCatalogPage] = useState(0);
+  const [catalogTotal, setCatalogTotal] = useState(demoProperties.length);
+  const [hasMoreProperties, setHasMoreProperties] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Property | null>(null);
   const [search, setSearch] = useState('');
@@ -676,6 +680,7 @@ export default function App() {
     [selectedDocumentCode, t.document.templates],
   );
   const quickFilterLabels = {
+    featured: t.catalog.featured,
     saleCaba: localeLabel(t.catalog.sale, 'CABA'),
     rent: t.catalog.rent,
     premiumHomes: t.product.features[0]?.title === 'Properties' ? 'Premium homes' : t.product.features[0]?.title === 'Imóveis' ? 'Casas premium' : 'Casas premium',
@@ -707,16 +712,19 @@ export default function App() {
 
   if (legalPageKey) return <LegalPage pageKey={legalPageKey} />;
 
-  async function loadProperties(filters: Record<string, string | number | undefined>) {
+  async function loadProperties(filters: Record<string, string | number | boolean | undefined>, page = 0, append = false) {
     setLoading(true);
     try {
-      const next = await fetchProperties(filters);
-      setProperties(next);
+      const next = await fetchProperties(filters, page);
+      setProperties((current) => append ? [...current, ...next.items] : next.items);
+      setCatalogPage(next.page);
+      setCatalogTotal(next.totalElements);
+      setHasMoreProperties(next.hasMore);
       track('SEARCH', {
         actionCode: 'properties_search',
         actionLabel: 'Buscar propiedades',
         category: 'CATALOG',
-        metadata: { filters, results: next.length },
+        metadata: { filters, page: next.page, pageSize: next.pageSize, results: next.items.length, total: next.totalElements },
       });
     } finally {
       setLoading(false);
@@ -725,7 +733,11 @@ export default function App() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void loadProperties({ search, operationType: operation });
+    void loadProperties({ search, operationType: operation }, 0, false);
+  }
+
+  function handleLoadMore() {
+    void loadProperties({ search, operationType: operation }, catalogPage + 1, true);
   }
 
   function handleSelect(property: Property) {
@@ -868,7 +880,7 @@ export default function App() {
                 key={filter.labelKey}
                 onClick={() => {
                   setOperation(filter.operationType || '');
-                  void loadProperties(filter);
+                  void loadProperties(filter, 0, false);
                   track('FILTER', { actionCode: `quick_filter_${filter.labelKey}`, actionLabel: quickFilterLabels[filter.labelKey as keyof typeof quickFilterLabels], category: 'CATALOG', metadata: filter });
                 }}
               >
@@ -881,6 +893,14 @@ export default function App() {
               {properties.map((property) => <PropertyCard key={property.id} property={property} onSelect={handleSelect} />)}
             </div>
           )}
+          <div className="catalog-more">
+            <span>{properties.length} / {catalogTotal}</span>
+            {hasMoreProperties && (
+              <button type="button" onClick={handleLoadMore} disabled={loading}>
+                {loading ? t.catalog.loading : 'Ver mas propiedades'}
+              </button>
+            )}
+          </div>
         </section>
 
         <section className="section bi-section">

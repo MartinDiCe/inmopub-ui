@@ -35,7 +35,17 @@ type PublicPropertyResponse = {
   updatedAt?: string;
 };
 
+export type PropertyPage = {
+  items: Property[];
+  page: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  hasMore: boolean;
+};
+
 const imageFallbacks = demoProperties.map((item) => item.imageUrl);
+const defaultPageSize = 6;
 
 function number(value: unknown, fallback = 0): number {
   const parsed = typeof value === 'number' ? value : Number(value);
@@ -111,7 +121,46 @@ function mapProperty(raw: PublicPropertyResponse, index: number): Property {
   };
 }
 
-export async function fetchProperties(filters: {
+function dailyRank(value: string): number {
+  const seed = Math.floor(Date.now() / 86_400_000);
+  let hash = seed;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = Math.imul(hash ^ value.charCodeAt(index), 2654435761);
+  }
+  return hash >>> 0;
+}
+
+function demoOrder(items: Property[]): Property[] {
+  return [...items].sort((a, b) => {
+    const featuredDelta = Number(Boolean(b.featured)) - Number(Boolean(a.featured));
+    if (featuredDelta !== 0) return featuredDelta;
+    return dailyRank(a.id) - dailyRank(b.id);
+  });
+}
+
+function localDemoPage(filters: FetchPropertyFilters, page: number, pageSize: number): PropertyPage {
+  const search = filters.search?.trim().toLowerCase() || '';
+  const filtered = demoProperties.filter((property) => {
+    const matchesSearch = !search || `${property.title} ${property.city} ${property.zone} ${property.neighborhood}`.toLowerCase().includes(search);
+    const matchesOperation = !filters.operationType || property.operationType === filters.operationType;
+    const matchesType = !filters.propertyType || property.propertyType.toLowerCase().includes(String(filters.propertyType).toLowerCase());
+    const matchesFeatured = !filters.featuredOnly || Boolean(property.featured);
+    return matchesSearch && matchesOperation && matchesType && matchesFeatured;
+  });
+  const ordered = demoOrder(filtered);
+  const start = page * pageSize;
+  const items = ordered.slice(start, start + pageSize);
+  return {
+    items,
+    page,
+    pageSize,
+    totalElements: ordered.length,
+    totalPages: Math.max(1, Math.ceil(ordered.length / pageSize)),
+    hasMore: start + pageSize < ordered.length,
+  };
+}
+
+type FetchPropertyFilters = {
   search?: string;
   operationType?: string;
   propertyType?: string;
@@ -119,11 +168,14 @@ export async function fetchProperties(filters: {
   zone?: string;
   minPrice?: number;
   maxPrice?: number;
-} = {}): Promise<Property[]> {
+  featuredOnly?: boolean;
+};
+
+export async function fetchProperties(filters: FetchPropertyFilters = {}, page = 0, pageSize = defaultPageSize): Promise<PropertyPage> {
   const url = new URL(apiUrl('/v1/public/properties'));
   url.searchParams.set('tenantId', appConfig.tenantId);
-  url.searchParams.set('page', '0');
-  url.searchParams.set('pageSize', '24');
+  url.searchParams.set('page', `${page}`);
+  url.searchParams.set('pageSize', `${pageSize}`);
   url.searchParams.set('unassignedOnly', 'true');
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && `${value}`.trim()) {
@@ -136,10 +188,20 @@ export async function fetchProperties(filters: {
     if (!response.ok) throw new Error(`Properties public search failed ${response.status}`);
     const json = await response.json();
     const content = Array.isArray(json) ? json : Array.isArray(json?.content) ? json.content : [];
-    const mapped = content.map(mapProperty);
-    return mapped.length ? mapped : demoProperties;
+    const mapped = demoOrder(content.map(mapProperty));
+    if (!mapped.length) return localDemoPage(filters, page, pageSize);
+    const totalElements = Number(json?.totalElements ?? mapped.length);
+    const totalPages = Number(json?.totalPages ?? (Math.ceil(totalElements / pageSize) || 1));
+    return {
+      items: mapped,
+      page: Number(json?.page ?? page),
+      pageSize: Number(json?.pageSize ?? pageSize),
+      totalElements,
+      totalPages,
+      hasMore: page + 1 < totalPages,
+    };
   } catch {
-    return demoProperties;
+    return localDemoPage(filters, page, pageSize);
   }
 }
 
