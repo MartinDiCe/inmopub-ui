@@ -2,11 +2,12 @@ export type Locale = 'es' | 'en' | 'pt';
 
 type Messages = {
   meta: { title: string; description: string };
-  nav: { product: string; catalog: string; simulator: string; demo: string; seeDemo: string; home: string; privacy: string; cookies: string; terms: string };
+  nav: { product: string; catalog: string; backoffice: string; simulator: string; demo: string; seeDemo: string; home: string; privacy: string; cookies: string; terms: string };
   hero: { eyebrow: string; title: string; body: string; primary: string; secondary: string; proofLogo: string; proofLeads: string; proofCases: string };
   insights: Array<{ value: string; label: string; source: string }>;
   product: { eyebrow: string; title: string; body: string; features: Array<{ title: string; text: string }> };
   copilotSection: { eyebrow: string; title: string; body: string; cards: Array<{ tag: string; title: string; text: string }> };
+  backoffice: { eyebrow: string; title: string; body: string; views: Array<{ label: string; title: string; summary: string; kpis: Array<{ label: string; value: string }> }> };
   catalog: { eyebrow: string; title: string; body: string; search: string; operation: string; sale: string; rent: string; temporary: string; searchButton: string; loading: string; openCard: string; featured: string };
   bi: { eyebrow: string; title: string; body: string; properties: string; score: string; leads: string; visits: string; saleRent: string };
   flow: { eyebrow: string; title: string; steps: Array<{ title: string; text: string }> };
@@ -45,7 +46,7 @@ export const messages: Record<Locale, Messages> = {
       title: 'InmoPub | Mini portal inmobiliario, consultas y documentos',
       description: 'Mini portal inmobiliario, seguimiento comercial y documentos para inmobiliarias.',
     },
-    nav: { product: 'Producto', catalog: 'Catálogo', simulator: 'Simulador', demo: 'Demo', seeDemo: 'Ver demo', home: 'Inicio', privacy: 'Privacidad', cookies: 'Cookies', terms: 'Términos' },
+    nav: { product: 'Producto', catalog: 'Catálogo', backoffice: 'Backoffice', simulator: 'Simulador', demo: 'Demo', seeDemo: 'Ver demo', home: 'Inicio', privacy: 'Privacidad', cookies: 'Cookies', terms: 'Términos' },
     hero: {
       eyebrow: 'Mini portal inmobiliario + consultas + documentos',
       title: 'Publicá propiedades y convertí consultas en operaciones.',
@@ -83,6 +84,18 @@ export const messages: Record<Locale, Messages> = {
         { tag: 'Sin IA · Operativo', title: 'Hace el trabajo repetible con reglas claras.', text: 'Lista propiedades, filtra interesados, agenda visitas, arma reservas desde plantilla, pide datos faltantes y deja todo trazado por inmobiliaria, usuario y operación.' },
         { tag: 'Con IA · Comercial', title: 'Ayuda a vender mejor sin guardar nada sin confirmación.', text: 'Resume consultas largas, detecta intención, redacta respuestas, sugiere próximos pasos, prepara objeciones y guía al vendedor para cerrar visita, reserva o demo.' },
         { tag: 'Demo y captación', title: 'También actúa como asesor de venta de InmoPub.', text: 'Explica el ROI, compara contra planillas y portales, califica leads de inmobiliarias y propone el flujo ideal: propiedad publicada, consulta, seguimiento y documento.' },
+      ],
+    },
+    backoffice: {
+      eyebrow: 'Backoffice InmoPub',
+      title: 'La inmobiliaria ve cartera, precio por zona, expedientes y documentos en un solo lugar.',
+      body: 'Capturas reales del tenant InmoPub Demo: 60 propiedades paginadas, ficha interna con moneda y referencia m2, expedientes inmobiliarios, dashboard de casos y copiloto consultando datos por API.',
+      views: [
+        { label: 'Cartera', title: 'Cartera de propiedades operativa', summary: 'Listado interno con 60 propiedades, filtros, estados comerciales, propietarios, precios y paginado real.', kpis: [{ label: 'Propiedades', value: '60' }, { label: 'Páginas', value: '6' }, { label: 'Estados', value: '5' }, { label: 'Monedas', value: 'ARS/USD' }] },
+        { label: 'Ficha', title: 'Ficha interna con moneda y referencia m2', summary: 'Alta y edición de propiedad con selector de moneda, nota territorial no invasiva y sugerencia de precio por zona.', kpis: [{ label: 'Referencia', value: 'm2' }, { label: 'Moneda', value: 'USD' }, { label: 'Zona', value: 'Dique 3' }, { label: 'Precio', value: '317K' }] },
+        { label: 'Expedientes', title: 'Gestión de casos inmobiliarios', summary: 'Reservas, boletos, contratos, captaciones y visitas con estados trazables y vencimientos.', kpis: [{ label: 'Expedientes', value: '12' }, { label: 'Abiertos', value: '9' }, { label: 'Cerrados', value: '2' }, { label: 'Por vencer', value: '8' }] },
+        { label: 'Dashboard', title: 'Dashboard de expedientes y vencimientos', summary: 'KPIs de operación inmobiliaria: tasa de cierre, costo estimado, distribución por tipo y próximos vencimientos.', kpis: [{ label: 'Cierre', value: '17%' }, { label: 'Costo est.', value: '$1.2M' }, { label: 'Tipos', value: '5' }, { label: 'Vencidos', value: '0' }] },
+        { label: 'Copiloto', title: 'Copiloto consultando cartera y expedientes', summary: 'El asistente lee Propiedades y CaseFlow por API para resumir zonas, precios, m2, cartera USD y expedientes abiertos.', kpis: [{ label: 'Zonas', value: '8' }, { label: 'Cartera USD', value: '23M' }, { label: 'Expedientes', value: '12' }, { label: 'API', value: 'Live' }] },
       ],
     },
     catalog: { eyebrow: 'Catálogo inmobiliario', title: 'Así se ve una inmobiliaria usando InmoPub.', body: 'Mostrá propiedades reales con filtros, ficha vendible, captura de interesados y seguimiento comercial desde el primer contacto.', search: 'Buscar barrio, ciudad, título...', operation: 'Operación', sale: 'Venta', rent: 'Alquiler', temporary: 'Temporario', searchButton: 'Buscar', loading: 'Cargando propiedades...', openCard: 'Ver ficha vendible', featured: 'Destacada' },
@@ -133,7 +146,7 @@ export const messages: Record<Locale, Messages> = {
 messages.en = {
   ...messages.es,
   meta: { title: 'InmoPub | Real estate mini portal, leads and documents', description: 'Real estate mini portal, commercial follow-up and documents for agencies.' },
-  nav: { product: 'Product', catalog: 'Catalog', simulator: 'Simulator', demo: 'Demo', seeDemo: 'See demo', home: 'Home', privacy: 'Privacy', cookies: 'Cookies', terms: 'Terms' },
+  nav: { product: 'Product', catalog: 'Catalog', backoffice: 'Backoffice', simulator: 'Simulator', demo: 'Demo', seeDemo: 'See demo', home: 'Home', privacy: 'Privacy', cookies: 'Cookies', terms: 'Terms' },
   hero: { eyebrow: 'Real estate mini portal + leads + documents', title: 'Publish properties and turn inquiries into deals.', body: 'InmoPub is subscription-based and centralizes properties, prospects, visits and commercial documents. Try it for 3 months with your real operation to measure recovered inquiries, visits and faster closings.', primary: 'See flow demo', secondary: 'Explore properties', proofLogo: 'Public listing with logo', proofLeads: 'Leads and follow-up', proofCases: 'Cases and documents' },
   insights: [
     { value: '0.4% - 1.2%', label: 'average conversion for digital real estate inquiries', source: 'RealScout / JustCall, 2026' },
@@ -209,7 +222,7 @@ messages.en = {
 messages.pt = {
   ...messages.es,
   meta: { title: 'InmoPub | Mini portal imobiliário, consultas e documentos', description: 'Mini portal imobiliário, acompanhamento comercial e documentos para imobiliárias.' },
-  nav: { product: 'Produto', catalog: 'Catálogo', simulator: 'Simulador', demo: 'Demo', seeDemo: 'Ver demo', home: 'Início', privacy: 'Privacidade', cookies: 'Cookies', terms: 'Termos' },
+  nav: { product: 'Produto', catalog: 'Catálogo', backoffice: 'Backoffice', simulator: 'Simulador', demo: 'Demo', seeDemo: 'Ver demo', home: 'Início', privacy: 'Privacidade', cookies: 'Cookies', terms: 'Termos' },
   hero: { eyebrow: 'Mini portal imobiliário + consultas + documentos', title: 'Publique imóveis e transforme consultas em operações.', body: 'InmoPub funciona por assinatura e centraliza imóveis, interessados, visitas e documentos comerciais. Teste por 3 meses com sua operação real para medir consultas recuperadas, visitas e fechamentos mais rápidos.', primary: 'Ver demo do fluxo', secondary: 'Explorar imóveis', proofLogo: 'Ficha pública com logo', proofLeads: 'Leads e acompanhamento', proofCases: 'Casos e documentos' },
   insights: [
     { value: '0.4% - 1.2%', label: 'conversão média de consultas imobiliárias digitais', source: 'RealScout / JustCall, 2026' },

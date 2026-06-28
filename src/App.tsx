@@ -141,6 +141,68 @@ function DocumentPreview({
   );
 }
 
+type BackofficeView = {
+  label: string;
+  title: string;
+  summary: string;
+  kpis: Array<{ label: string; value: string }>;
+};
+
+function BackofficeGallery({ data }: { data: { eyebrow: string; title: string; body: string; views: BackofficeView[] } }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = data.views[activeIndex] || data.views[0];
+  const icons = [Building2, Calculator, ClipboardCheck, BarChart3, Bot];
+  const screenshots = [
+    '/backoffice/properties-list.png',
+    '/backoffice/property-detail.png',
+    '/backoffice/caseflow-cases.png',
+    '/backoffice/caseflow-dashboard.png',
+    '/backoffice/backoffice-copilot.png',
+  ];
+  const activeScreenshot = screenshots[activeIndex] || screenshots[0];
+
+  return (
+    <section className="section backoffice-section" id="backoffice">
+      <div className="section-title left">
+        <span className="eyebrow">{data.eyebrow}</span>
+        <h2>{data.title}</h2>
+        <p>{data.body}</p>
+      </div>
+      <div className="backoffice-layout">
+        <aside className="backoffice-menu">
+          {data.views.map((view, index) => {
+            const Icon = icons[index] || BarChart3;
+            return (
+              <button key={view.label} type="button" className={index === activeIndex ? 'active' : ''} onClick={() => setActiveIndex(index)}>
+                <Icon size={18} />
+                <span>{view.label}</span>
+              </button>
+            );
+          })}
+        </aside>
+        <article className="backoffice-panel">
+          <header>
+            <div>
+              <span className="eyebrow">InmoPub Demo</span>
+              <h3>{active.title}</h3>
+              <p>{active.summary}</p>
+            </div>
+            <strong>API real</strong>
+          </header>
+          <div className="backoffice-shot">
+            <img src={activeScreenshot} alt={`${active.title} - captura real InmoPub`} loading="lazy" />
+          </div>
+          <div className="backoffice-kpis">
+            {active.kpis.map((kpi) => (
+              <span key={kpi.label}><b>{kpi.value}</b>{kpi.label}</span>
+            ))}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
 function Logo() {
   const { t } = useLocale();
   return (
@@ -772,6 +834,7 @@ export default function App() {
         <nav>
           <a href="#producto" data-track="nav_producto">{t.nav.product}</a>
           <a href="#catalogo" data-track="nav_catalogo">{t.nav.catalog}</a>
+          <a href="#backoffice" data-track="nav_backoffice">{t.nav.backoffice}</a>
           <a href="#roi" data-track="nav_roi">{t.nav.simulator}</a>
           <a href="#demo" data-track="nav_demo">{t.nav.demo}</a>
         </nav>
@@ -914,6 +977,8 @@ export default function App() {
             )}
           </div>
         </section>
+
+        <BackofficeGallery data={t.backoffice} />
 
         <section className="section bi-section">
           <div className="bi-card main">
