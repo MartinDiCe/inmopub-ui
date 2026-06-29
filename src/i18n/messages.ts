@@ -43,14 +43,14 @@ type Messages = {
 export const messages: Record<Locale, Messages> = {
   es: {
     meta: {
-      title: 'InmoPub | Mini portal inmobiliario, consultas y documentos',
-      description: 'Mini portal inmobiliario, seguimiento comercial y documentos para inmobiliarias.',
+      title: 'InmoPub | BackOffice inmobiliario, consultas y documentos',
+      description: 'BackOffice inmobiliario para publicar propiedades, captar interesados, seguir operaciones y generar documentos.',
     },
     nav: { product: 'Producto', catalog: 'Catálogo', backoffice: 'Backoffice', simulator: 'Simulador', demo: 'Demo', seeDemo: 'Ver demo', home: 'Inicio', privacy: 'Privacidad', cookies: 'Cookies', terms: 'Términos' },
     hero: {
-      eyebrow: 'Mini portal inmobiliario + consultas + documentos',
+      eyebrow: 'BackOffice inmobiliario + mini portal + documentos',
       title: 'Publicá propiedades y convertí consultas en operaciones.',
-      body: 'InmoPub se contrata por suscripción y centraliza propiedades, interesados, visitas y documentos comerciales. Probalo 3 meses con tu operación real para medir si recupera consultas, ordena visitas y acelera cierres.',
+      body: 'InmoPub no reemplaza a los portales masivos: administra la operación. Centraliza propiedades, interesados, visitas, expedientes y documentos para que cada consulta tenga seguimiento y cierre medible.',
       primary: 'Ver demo del flujo',
       secondary: 'Explorar propiedades',
       proofLogo: 'Ficha pública con logo',
@@ -65,14 +65,14 @@ export const messages: Record<Locale, Messages> = {
     ],
     product: {
       eyebrow: 'Producto vertical',
-      title: 'No compite contra portales masivos. Convierte tu operación en un mini portal vendible.',
-      body: 'La propuesta es simple: una inmobiliaria carga, publica, mide, atiende y documenta desde un flujo profesional propio, con una prueba inicial de 3 meses antes de escalar la suscripción.',
+      title: 'No compite contra portales masivos: ellos generan tráfico, InmoPub administra la operación.',
+      body: 'La propuesta es simple: una inmobiliaria carga, publica, capta, mide, atiende y documenta desde un flujo profesional propio. Es el sistema operativo para una inmobiliaria moderna.',
       features: [
-        { title: 'Propiedades', text: 'Venta, alquiler, temporario, fotos, amenities, estados y ficha pública compartible.' },
+        { title: 'Propiedades', text: 'Venta, alquiler, temporario, propietarios, fotos, amenities, estados y ficha pública compartible.' },
         { title: 'Consultas', text: 'Interesados con fuente, prioridad, seguimiento, visitas y responsable comercial.' },
         { title: 'Operaciones', text: 'Reserva, autorización, boleto, contrato, entrega y documentación asociada.' },
         { title: 'Documentos', text: 'Plantillas comerciales con tu logo y datos de la operación.' },
-        { title: 'Panel comercial', text: 'Tiempos de respuesta, conversión, visitas, publicaciones y documentos emitidos.' },
+        { title: 'Referencias y panel', text: 'Precio por zona, conversión, visitas, publicaciones, vencimientos y documentos emitidos.' },
         { title: 'Copiloto inmobiliario', text: 'Opera consultas y documentos con flujos seguros; suma IA para vender, calificar y responder mejor.' },
       ],
     },
@@ -130,7 +130,7 @@ export const messages: Record<Locale, Messages> = {
     modal: { close: 'Cerrar', score: 'interés comercial', price: 'precio', days: 'días publicada', daysPublished: 'días publicada', attributes: 'atributos', flowTitle: 'Flujo conectado', flow: ['Consulta capturada desde ficha pública.', 'La consulta entra al seguimiento con fuente y propiedad.', 'Se arma una carpeta comercial para la reserva, alquiler o venta.', 'Se genera documento: reserva, autorización, boleto o contrato.'] },
     copilot: { title: 'InmoPub Copilot', welcomeTitle: 'Copiloto InmoPub', welcome: 'Soy asesor inmobiliario y consultor comercial de InmoPub. Puedo orientar sobre publicación de propiedades, consultas, visitas, reservas, documentos, suscripción y prueba de 3 meses.', prompts: ['Quiero una prueba de 3 meses', 'Cómo atiendo una consulta', 'Qué documentos genera', 'Hablar por WhatsApp'], nextTitle: 'Siguiente mejor acción', nextAnswer: 'Como asesor inmobiliario, llevaría la conversación al siguiente paso concreto: entender la propiedad, calificar al interesado, coordinar visita y preparar la documentación. Para vender InmoPub, mostrá ese flujo completo y ofrecé una prueba de 3 meses con métricas claras.', input: 'Preguntame por venta, alquiler, visitas, documentos o demo...', fab: 'Copiloto', whatsappText: 'Hola, quiero una prueba de 3 meses de InmoPub para mi inmobiliaria.', followPrompts: ['Agendar prueba', 'Ver propiedades demo', 'Cómo cerrar una visita', 'Hablar por WhatsApp'] },
     cookies: { title: 'Cookies y medición', body: 'Usamos cookies no esenciales sólo si aceptás para medir campañas, consultas, clicks y uso del copiloto. Podés seguir navegando aunque rechaces.', reject: 'Rechazar', accept: 'Aceptar', aria: 'Aviso de cookies' },
-    footer: { body: 'Producto vertical para inmobiliarias. Mini portal, seguimiento comercial y documentos.', legal: 'Legal', privacy: 'Privacidad', cookies: 'Cookies', terms: 'Términos', legalNotice: 'Aviso legal' },
+    footer: { body: 'BackOffice inmobiliario para publicar, captar, vender y administrar operaciones.', legal: 'Legal', privacy: 'Privacidad', cookies: 'Cookies', terms: 'Términos', legalNotice: 'Aviso legal' },
     legalPages: {
       legal: { title: 'Legal y transparencia', updatedLabel: 'Última actualización', eyebrow: 'InmoPub legal', sections: [['Marco legal', 'InmoPub es un sitio comercial de DiceProjects orientado a mostrar una solución vertical para inmobiliarias.'], ['Documentos disponibles', 'Podés consultar los términos y condiciones, política de privacidad, política de cookies y aviso legal desde los enlaces al pie del sitio.'], ['Contacto legal', 'Para consultas legales o de privacidad escribinos a legal@diceprojects.com.']] },
       privacidad: { title: 'Política de privacidad', updatedLabel: 'Última actualización', eyebrow: 'InmoPub legal', sections: [['Alcance', 'Esta política aplica al sitio web InmoPub, a sus formularios comerciales, eventos de marketing y consultas por propiedades.'], ['Datos que podemos tratar', 'Podemos procesar nombre, email, teléfono, inmobiliaria, mensaje, URL de origen, campaña, eventos de navegación y preguntas al copiloto.'], ['Finalidad', 'Usamos la información para responder consultas, coordinar demos, medir campañas y mejorar la experiencia.'], ['Derechos', 'Podés solicitar acceso, rectificación o eliminación de tus datos escribiendo a legal@diceprojects.com.']] },
